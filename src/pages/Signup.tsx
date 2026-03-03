@@ -572,59 +572,55 @@ const Signup = () => {
               </div>
 
               {/* Institution Selection - shows after district and student type */}
-              {studentType && formData.district.trim() && (
+              {studentType && formData.district.trim() ? (
                 <div>
                   <Label htmlFor="institution" className="text-sm">
                     {studentType === "school_student" ? "School" : "Coaching Center"} *
                   </Label>
-                  {loadingInstitutions ? (
-                    <div className="flex items-center gap-2 h-12 text-sm text-muted-foreground">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Loading...
-                    </div>
-                  ) : studentType === "school_student" ? (
-                    <>
-                      <select
-                        id="institution"
-                        className="flex h-10 sm:h-12 w-full rounded-lg sm:rounded-xl border border-input bg-background px-3 sm:px-4 py-2 sm:py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        value={selectedSchoolId}
-                        onChange={(e) => setSelectedSchoolId(e.target.value)}
-                        required
-                      >
-                        <option value="">Select School</option>
-                        {schools.map((school) => (
-                          <option key={school.id} value={school.id}>
-                            {school.name}
-                          </option>
-                        ))}
-                      </select>
-                      {schools.length === 0 && (
-                        <p className="text-xs text-muted-foreground mt-1">No schools found in this district</p>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <select
-                        id="institution"
-                        className="flex h-10 sm:h-12 w-full rounded-lg sm:rounded-xl border border-input bg-background px-3 sm:px-4 py-2 sm:py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        value={selectedCoachingId}
-                        onChange={(e) => setSelectedCoachingId(e.target.value)}
-                        required
-                      >
-                        <option value="">Select Coaching Center</option>
-                        {coachingCenters.map((cc) => (
-                          <option key={cc.id} value={cc.id}>
-                            {cc.name}
-                          </option>
-                        ))}
-                      </select>
-                      {coachingCenters.length === 0 && (
-                        <p className="text-xs text-muted-foreground mt-1">No coaching centers found in this district</p>
-                      )}
-                    </>
+                  <div className="relative">
+                    {loadingInstitutions && (
+                      <div className="flex items-center gap-2 h-12 text-sm text-muted-foreground absolute inset-0 z-10 bg-background">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Loading...
+                      </div>
+                    )}
+                    <select
+                      id="institution"
+                      className="flex h-10 sm:h-12 w-full rounded-lg sm:rounded-xl border border-input bg-background px-3 sm:px-4 py-2 sm:py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      value={studentType === "school_student" ? selectedSchoolId : selectedCoachingId}
+                      onChange={(e) => {
+                        if (studentType === "school_student") {
+                          setSelectedSchoolId(e.target.value);
+                        } else {
+                          setSelectedCoachingId(e.target.value);
+                        }
+                      }}
+                      required={!loadingInstitutions}
+                    >
+                      <option value="">
+                        {studentType === "school_student" ? "Select School" : "Select Coaching Center"}
+                      </option>
+                      {studentType === "school_student"
+                        ? schools.map((school) => (
+                            <option key={school.id} value={school.id}>
+                              {school.name}
+                            </option>
+                          ))
+                        : coachingCenters.map((cc) => (
+                            <option key={cc.id} value={cc.id}>
+                              {cc.name}
+                            </option>
+                          ))}
+                    </select>
+                  </div>
+                  {!loadingInstitutions && studentType === "school_student" && schools.length === 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">No schools found in this district</p>
+                  )}
+                  {!loadingInstitutions && studentType === "coaching_student" && coachingCenters.length === 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">No coaching centers found in this district</p>
                   )}
                 </div>
-              )}
+              ) : null}
 
               <div>
                 <Label htmlFor="password" className="text-sm">Password *</Label>
