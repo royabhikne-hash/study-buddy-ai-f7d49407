@@ -37,6 +37,13 @@ export const GlobalErrorHandlers = () => {
     };
 
     const onError = (event: ErrorEvent) => {
+      const msg = event.error?.message || event.message || "";
+      // Suppress React DOM reconciliation errors caused by external scripts (Tailwind CDN, etc.)
+      if (msg.includes("removeChild") || msg.includes("insertBefore") || msg.includes("not a child")) {
+        event.preventDefault();
+        console.warn("Suppressed DOM reconciliation error:", msg);
+        return;
+      }
       console.error("Global error:", event.error || event.message);
       maybeToast(event.error || event.message);
     };

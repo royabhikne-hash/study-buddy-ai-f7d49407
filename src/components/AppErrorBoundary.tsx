@@ -15,11 +15,21 @@ type State = {
 export class AppErrorBoundary extends React.Component<Props, State> {
   state: State = { hasError: false };
 
-  static getDerivedStateFromError() {
+  static getDerivedStateFromError(error: Error) {
+    // Don't show error boundary for DOM reconciliation errors (caused by external scripts)
+    const msg = error?.message || "";
+    if (msg.includes("removeChild") || msg.includes("insertBefore") || msg.includes("not a child")) {
+      return { hasError: false };
+    }
     return { hasError: true };
   }
 
   componentDidCatch(error: unknown, info: unknown) {
+    const msg = error instanceof Error ? error.message : "";
+    if (msg.includes("removeChild") || msg.includes("insertBefore") || msg.includes("not a child")) {
+      console.warn("Suppressed DOM reconciliation error in ErrorBoundary");
+      return;
+    }
     console.error("App crashed:", error, info);
   }
 
