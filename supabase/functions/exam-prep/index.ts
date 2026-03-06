@@ -155,7 +155,7 @@ Deno.serve(async (req) => {
         }
 
         // Use AI to extract key topics
-        const aiResponse = await fetch("https://api.lovable.dev/v1/chat/completions", {
+        const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${lovableApiKey}`,
@@ -177,13 +177,18 @@ Deno.serve(async (req) => {
           }),
         });
 
-        const aiData = await aiResponse.json();
         let extracted = { topics: [], summary: "Content extracted successfully", estimatedStudyHours: 5 };
-        try {
-          const content = aiData.choices?.[0]?.message?.content || "";
-          const jsonMatch = content.match(/\{[\s\S]*\}/);
-          if (jsonMatch) extracted = JSON.parse(jsonMatch[0]);
-        } catch {}
+        if (aiResponse.ok) {
+          const aiData = await aiResponse.json();
+          try {
+            const content = aiData.choices?.[0]?.message?.content || "";
+            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            if (jsonMatch) extracted = JSON.parse(jsonMatch[0]);
+          } catch {}
+        } else {
+          const errText = await aiResponse.text();
+          console.error("AI extract error:", aiResponse.status, errText.substring(0, 500));
+        }
 
         // Update material
         await supabase
@@ -255,7 +260,7 @@ Instructions:
           { role: "user", content: message },
         ];
 
-        const aiResponse = await fetch("https://api.lovable.dev/v1/chat/completions", {
+        const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${lovableApiKey}`,
@@ -267,6 +272,12 @@ Instructions:
             temperature: 0.7,
           }),
         });
+
+        if (!aiResponse.ok) {
+          const errText = await aiResponse.text();
+          console.error("AI API error:", aiResponse.status, errText.substring(0, 500));
+          throw new Error(`AI API error: ${aiResponse.status}`);
+        }
 
         const aiData = await aiResponse.json();
         const reply = aiData.choices?.[0]?.message?.content || "I'm having trouble responding right now. Please try again.";
