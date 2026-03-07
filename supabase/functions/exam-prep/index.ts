@@ -5,6 +5,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const AI_MODEL = "google/gemini-3-flash-preview";
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -34,7 +36,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Get student
     const { data: student } = await supabase
       .from("students")
       .select("id, full_name, class, board")
@@ -48,7 +49,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Get subscription plan
     const { data: sub } = await supabase
       .from("subscriptions")
       .select("plan")
@@ -56,15 +56,15 @@ Deno.serve(async (req) => {
       .single();
 
     const plan = sub?.plan || "starter";
-
     const body = await req.json();
     const { action } = body;
+
+    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
 
     switch (action) {
       case "check_access": {
         const limits: Record<string, number> = { pro: 15, basic: 8, starter: 4 };
         const monthlyLimit = limits[plan] || 4;
-
         const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
         const { data: usage } = await supabase
           .from("exam_prep_usage")
@@ -75,20 +75,14 @@ Deno.serve(async (req) => {
 
         const sessionsUsed = usage?.sessions_used || 0;
         return new Response(JSON.stringify({
-          hasAccess: true,
-          plan,
-          monthlyLimit,
-          sessionsUsed,
+          hasAccess: true, plan, monthlyLimit, sessionsUsed,
           sessionsRemaining: Math.max(0, monthlyLimit - sessionsUsed),
-          studentName: student.full_name,
-          studentId: student.id,
+          studentName: student.full_name, studentId: student.id,
         }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
 
       case "create_session": {
         const { examName, examDate, targetScore, topicFamiliarity, mood } = body;
-
-        // Check monthly limit
         const limits: Record<string, number> = { pro: 15, basic: 8, starter: 4 };
         const monthlyLimit = limits[plan] || 4;
         const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
@@ -103,32 +97,24 @@ Deno.serve(async (req) => {
         const sessionsUsed = usage?.sessions_used || 0;
         if (sessionsUsed >= monthlyLimit) {
           return new Response(JSON.stringify({ error: "Monthly limit reached", limit: monthlyLimit }), {
-            status: 429,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
 
-        // Create session
         const { data: session, error: sessErr } = await supabase
           .from("exam_prep_sessions")
           .insert({
-            student_id: student.id,
-            exam_name: examName || "",
-            exam_date: examDate || null,
-            target_score: targetScore || null,
-            topic_familiarity: topicFamiliarity || "new",
-            mood: mood || "neutral",
+            student_id: student.id, exam_name: examName || "",
+            exam_date: examDate || null, target_score: targetScore || null,
+            topic_familiarity: topicFamiliarity || "new", mood: mood || "neutral",
             onboarding_completed: true,
           })
-          .select()
-          .single();
+          .select().single();
 
         if (sessErr) throw sessErr;
 
-        // Upsert usage
         await supabase.from("exam_prep_usage").upsert({
-          student_id: student.id,
-          usage_month: currentMonth,
+          student_id: student.id, usage_month: currentMonth,
           sessions_used: sessionsUsed + 1,
         }, { onConflict: "student_id,usage_month" });
 
@@ -139,39 +125,22 @@ Deno.serve(async (req) => {
 
       case "extract_content": {
         const { sessionId, fileUrl, fileName } = body;
-
-        // Use AI to extract topics from PDF text
-        const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
         if (!lovableApiKey) throw new Error("AI not configured");
 
-        // Get the file content from storage
         const { data: fileData } = await supabase.storage
-          .from("exam-prep-materials")
-          .download(fileUrl);
+          .from("exam-prep-materials").download(fileUrl);
 
         let textContent = "";
-        if (fileData) {
-          textContent = await fileData.text();
-        }
+        if (fileData) textContent = await fileData.text();
 
-        // Use AI to extract key topics
         const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${lovableApiKey}`,
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `Bearer ${lovableApiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
+            model: AI_MODEL,
             messages: [
-              {
-                role: "system",
-                content: "You are an educational content analyzer. Extract key topics, concepts, and create a structured study plan from the provided material. Return JSON with: { topics: [{ name, description, difficulty }], summary: string, estimatedStudyHours: number }",
-              },
-              {
-                role: "user",
-                content: `Extract key topics from this educational material (filename: ${fileName}):\n\n${textContent.substring(0, 15000)}`,
-              },
+              { role: "system", content: "You are an educational content analyzer. Extract key topics, concepts, and create a structured study plan from the provided material. Return JSON with: { topics: [{ name, description, difficulty }], summary: string, estimatedStudyHours: number }" },
+              { role: "user", content: `Extract key topics from this educational material (filename: ${fileName}):\n\n${textContent.substring(0, 15000)}` },
             ],
             temperature: 0.3,
           }),
@@ -190,22 +159,13 @@ Deno.serve(async (req) => {
           console.error("AI extract error:", aiResponse.status, errText.substring(0, 500));
         }
 
-        // Update material
-        await supabase
-          .from("exam_prep_materials")
-          .update({
-            extracted_content: textContent.substring(0, 50000),
-            extracted_topics: extracted.topics,
-            processing_status: "completed",
-          })
-          .eq("session_id", sessionId)
-          .eq("file_name", fileName);
+        await supabase.from("exam_prep_materials").update({
+          extracted_content: textContent.substring(0, 50000),
+          extracted_topics: extracted.topics, processing_status: "completed",
+        }).eq("session_id", sessionId).eq("file_name", fileName);
 
-        // Update session topics
-        await supabase
-          .from("exam_prep_sessions")
-          .update({ extracted_topics: extracted.topics })
-          .eq("id", sessionId);
+        await supabase.from("exam_prep_sessions")
+          .update({ extracted_topics: extracted.topics }).eq("id", sessionId);
 
         return new Response(JSON.stringify({ extracted }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -214,21 +174,13 @@ Deno.serve(async (req) => {
 
       case "chat": {
         const { sessionId, message, history } = body;
-
-        const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
         if (!lovableApiKey) throw new Error("AI not configured");
 
-        // Get session context
         const { data: session } = await supabase
-          .from("exam_prep_sessions")
-          .select("*")
-          .eq("id", sessionId)
-          .single();
+          .from("exam_prep_sessions").select("*").eq("id", sessionId).single();
 
-        // Get materials
         const { data: materials } = await supabase
-          .from("exam_prep_materials")
-          .select("extracted_content, extracted_topics")
+          .from("exam_prep_materials").select("extracted_content, extracted_topics")
           .eq("session_id", sessionId);
 
         const context = materials?.map((m: any) => m.extracted_content).join("\n").substring(0, 10000) || "";
@@ -255,12 +207,11 @@ ${context}
 
 CRITICAL Instructions:
 - NEVER use markdown formatting like **, ##, *, etc. Write plain text only. Use numbered lists (1. 2. 3.) or dashes for lists.
-- When the student uploads study material, you MUST ask specific, targeted questions about the KEY CONCEPTS from those materials. For example: "I see your material covers [specific topic]. Let me test your understanding - Can you explain [specific concept from the material]?"
+- When the student uploads study material, you MUST ask specific, targeted questions about the KEY CONCEPTS from those materials.
 - Proactively quiz the student on important topics from their materials
 - Adapt your teaching style based on the student's familiarity and mood
 - If mood is "stressed" or "low_energy", be extra encouraging and break things down simply
 - If mood is "ready" or "curious", challenge them with harder questions
-- Use real-world examples and scenarios to test understanding
 - Be conversational, supportive, and engaging
 - Always relate explanations directly to their uploaded study materials
 - Keep responses focused, clear, and not too long
@@ -274,33 +225,214 @@ CRITICAL Instructions:
 
         const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${lovableApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
-            messages,
-            temperature: 0.7,
-          }),
+          headers: { Authorization: `Bearer ${lovableApiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ model: AI_MODEL, messages, temperature: 0.7 }),
         });
 
         if (!aiResponse.ok) {
           const errText = await aiResponse.text();
           console.error("AI API error:", aiResponse.status, errText.substring(0, 500));
+          if (aiResponse.status === 429) {
+            return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
+              status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
           throw new Error(`AI API error: ${aiResponse.status}`);
         }
 
         const aiData = await aiResponse.json();
         const reply = aiData.choices?.[0]?.message?.content || "I'm having trouble responding right now. Please try again.";
 
-        // Save messages
         await supabase.from("exam_prep_messages").insert([
           { session_id: sessionId, role: "user", content: message },
           { session_id: sessionId, role: "assistant", content: reply },
         ]);
 
         return new Response(JSON.stringify({ reply }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      case "generate_virtual_exam": {
+        const { sessionId } = body;
+        if (!lovableApiKey) throw new Error("AI not configured");
+
+        const { data: session } = await supabase
+          .from("exam_prep_sessions").select("*").eq("id", sessionId).single();
+
+        const { data: materials } = await supabase
+          .from("exam_prep_materials").select("extracted_content, extracted_topics")
+          .eq("session_id", sessionId);
+
+        const context = materials?.map((m: any) => m.extracted_content).join("\n").substring(0, 12000) || "";
+        const topics = session?.extracted_topics || [];
+
+        const examPrompt = `You are an exam paper setter for Class ${student.class} (${student.board} board).
+Based on the following study material content, generate a virtual exam paper.
+
+Study Material Topics: ${JSON.stringify(topics)}
+Study Material Content: ${context}
+Exam Name: ${session?.exam_name || "General Exam"}
+
+Generate a balanced exam with the following structure:
+- 5 MCQ questions (1 mark each) - with 4 options (A, B, C, D) and correct answer
+- 3 Short Answer questions (2-3 marks each) - with model answers  
+- 2 Long Answer questions (5 marks each) - with model answers
+
+Total marks: 5 + 9 + 10 = ~24 marks
+
+ALL questions MUST be based on the study material provided. Do not ask questions outside the material.
+
+Return ONLY valid JSON in this exact format:
+{
+  "examTitle": "string",
+  "totalMarks": number,
+  "totalQuestions": 10,
+  "timeLimit": 30,
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "question": "string",
+      "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
+      "correctAnswer": "A",
+      "marks": 1,
+      "topic": "string",
+      "explanation": "string"
+    },
+    {
+      "id": 6,
+      "type": "short_answer",
+      "question": "string",
+      "modelAnswer": "string",
+      "marks": 3,
+      "topic": "string",
+      "keyPoints": ["point1", "point2"]
+    },
+    {
+      "id": 9,
+      "type": "long_answer", 
+      "question": "string",
+      "modelAnswer": "string",
+      "marks": 5,
+      "topic": "string",
+      "keyPoints": ["point1", "point2", "point3"]
+    }
+  ]
+}`;
+
+        const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${lovableApiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: AI_MODEL,
+            messages: [
+              { role: "system", content: "You are an expert exam paper setter. Return ONLY valid JSON, no markdown, no code blocks." },
+              { role: "user", content: examPrompt },
+            ],
+            temperature: 0.4,
+            max_tokens: 6000,
+          }),
+        });
+
+        if (!aiResponse.ok) {
+          const errText = await aiResponse.text();
+          console.error("Virtual exam generation error:", aiResponse.status, errText.substring(0, 500));
+          throw new Error(`AI API error: ${aiResponse.status}`);
+        }
+
+        const aiData = await aiResponse.json();
+        const content = aiData.choices?.[0]?.message?.content || "";
+        
+        let exam = null;
+        try {
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) exam = JSON.parse(jsonMatch[0]);
+        } catch (e) {
+          console.error("Failed to parse exam JSON:", e);
+          throw new Error("Failed to generate exam questions");
+        }
+
+        return new Response(JSON.stringify({ exam }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      case "evaluate_virtual_exam": {
+        const { sessionId, examData, answers } = body;
+        if (!lovableApiKey) throw new Error("AI not configured");
+
+        const evalPrompt = `You are an expert exam evaluator for Class ${student.class} (${student.board} board).
+
+Here is the exam paper with questions and the student's answers. Evaluate each answer carefully.
+
+Exam Questions and Student Answers:
+${examData.questions.map((q: any, i: number) => {
+  const answer = answers[i];
+  if (q.type === "mcq") {
+    return `Q${q.id}. [MCQ, ${q.marks} mark] ${q.question}\nOptions: ${q.options.join(', ')}\nCorrect Answer: ${q.correctAnswer}\nStudent's Answer: ${answer || "Not attempted"}\n`;
+  } else {
+    return `Q${q.id}. [${q.type === "short_answer" ? "Short Answer" : "Long Answer"}, ${q.marks} marks] ${q.question}\nModel Answer: ${q.modelAnswer}\nKey Points Expected: ${q.keyPoints?.join(', ') || 'N/A'}\nStudent's Answer: ${answer || "Not attempted"}\n`;
+  }
+}).join('\n')}
+
+Evaluate and return ONLY valid JSON:
+{
+  "totalMarksObtained": number,
+  "totalMarksPossible": ${examData.totalMarks},
+  "percentage": number,
+  "grade": "A+/A/B+/B/C/D/F",
+  "estimatedBoardPercentage": number,
+  "disclaimer": "This is an AI-estimated score based on your study material. Actual exam results may vary.",
+  "questionResults": [
+    {
+      "questionId": number,
+      "marksObtained": number,
+      "maxMarks": number,
+      "isCorrect": boolean,
+      "feedback": "Brief feedback on the answer",
+      "improvement": "How to improve this answer"
+    }
+  ],
+  "overallFeedback": "2-3 sentences about overall performance",
+  "strongTopics": ["topic1", "topic2"],
+  "weakTopics": ["topic1"],
+  "studyRecommendations": ["recommendation1", "recommendation2"]
+}`;
+
+        const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${lovableApiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: AI_MODEL,
+            messages: [
+              { role: "system", content: "You are a fair and encouraging exam evaluator. For MCQs, mark strictly correct/incorrect. For short/long answers, evaluate based on key concepts covered, not exact wording. Be generous but honest. Return ONLY valid JSON." },
+              { role: "user", content: evalPrompt },
+            ],
+            temperature: 0.3,
+            max_tokens: 4000,
+          }),
+        });
+
+        if (!aiResponse.ok) {
+          const errText = await aiResponse.text();
+          console.error("Exam evaluation error:", aiResponse.status, errText.substring(0, 500));
+          throw new Error(`AI API error: ${aiResponse.status}`);
+        }
+
+        const aiData = await aiResponse.json();
+        const content = aiData.choices?.[0]?.message?.content || "";
+        
+        let result = null;
+        try {
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) result = JSON.parse(jsonMatch[0]);
+        } catch (e) {
+          console.error("Failed to parse evaluation JSON:", e);
+          throw new Error("Failed to evaluate exam");
+        }
+
+        return new Response(JSON.stringify({ result }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -322,11 +454,8 @@ CRITICAL Instructions:
         const { data: invite, error: invErr } = await supabase
           .from("exam_prep_invites")
           .insert({ session_id: sessionId, inviter_id: student.id })
-          .select()
-          .single();
-
+          .select().single();
         if (invErr) throw invErr;
-
         return new Response(JSON.stringify({ invite }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -337,21 +466,16 @@ CRITICAL Instructions:
         const { data: invite } = await supabase
           .from("exam_prep_invites")
           .select("*, exam_prep_sessions(*)")
-          .eq("invite_code", inviteCode)
-          .eq("is_active", true)
-          .single();
+          .eq("invite_code", inviteCode).eq("is_active", true).single();
 
         if (!invite) {
           return new Response(JSON.stringify({ error: "Invalid or expired invite" }), {
-            status: 404,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
 
-        await supabase
-          .from("exam_prep_invites")
-          .update({ joined_by: student.id, is_active: false })
-          .eq("id", invite.id);
+        await supabase.from("exam_prep_invites")
+          .update({ joined_by: student.id, is_active: false }).eq("id", invite.id);
 
         return new Response(JSON.stringify({ session: invite.exam_prep_sessions }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -360,15 +484,13 @@ CRITICAL Instructions:
 
       default:
         return new Response(JSON.stringify({ error: "Unknown action" }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
     }
   } catch (err: any) {
     console.error("Exam prep error:", err);
     return new Response(JSON.stringify({ error: err.message || "Internal error" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
