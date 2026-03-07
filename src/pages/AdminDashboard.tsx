@@ -29,6 +29,7 @@ import {
   Trophy,
   Key,
   Crown,
+  BarChart3,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
