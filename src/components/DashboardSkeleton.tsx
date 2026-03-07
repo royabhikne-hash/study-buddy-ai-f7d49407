@@ -2,12 +2,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const DashboardSkeleton = () => {
   return (
-    <div className="min-h-screen liquid-bg relative overflow-hidden">
-      {/* Liquid orbs */}
-      <div className="liquid-orb liquid-orb-blue w-[300px] h-[300px] -top-20 -left-20" />
-      <div className="liquid-orb liquid-orb-purple w-[200px] h-[200px] top-40 -right-20" style={{ animationDelay: '3s' }} />
-
-      <header className="glass-nav border-b border-white/5 relative z-10">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -25,9 +21,9 @@ export const DashboardSkeleton = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 relative z-10">
+      <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <div className="glass-card p-6 md:p-8 text-center">
+          <div className="bg-card rounded-xl border border-border p-6 md:p-8 text-center">
             <Skeleton className="h-8 w-64 mx-auto mb-2" />
             <Skeleton className="h-4 w-48 mx-auto mb-6" />
             <div className="flex flex-wrap justify-center gap-3">
@@ -44,7 +40,7 @@ export const DashboardSkeleton = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="glass-card p-4">
+            <div key={i} className="bg-card rounded-xl border border-border p-4">
               <Skeleton className="w-10 h-10 rounded-lg mb-3" />
               <Skeleton className="h-3 w-16 mb-2" />
               <Skeleton className="h-6 w-20" />
@@ -52,11 +48,11 @@ export const DashboardSkeleton = () => {
           ))}
         </div>
 
-        <div className="glass-card p-6">
+        <div className="bg-card rounded-xl border border-border p-6">
           <Skeleton className="h-6 w-48 mb-4" />
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/5">
+              <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-muted/50">
                 <div className="flex items-center gap-4">
                   <Skeleton className="w-10 h-10 rounded-lg" />
                   <div>
@@ -79,8 +75,8 @@ export const DashboardSkeleton = () => {
 
 export const ProgressSkeleton = () => {
   return (
-    <div className="min-h-screen liquid-bg relative overflow-hidden">
-      <header className="glass-nav border-b border-white/5 relative z-10">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -91,10 +87,10 @@ export const ProgressSkeleton = () => {
           </div>
         </div>
       </header>
-      <main className="container mx-auto px-4 py-8 relative z-10">
+      <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="glass-card p-4">
+            <div key={i} className="bg-card rounded-xl border border-border p-4">
               <Skeleton className="w-10 h-10 rounded-lg mb-3" />
               <Skeleton className="h-3 w-20 mb-1" />
               <Skeleton className="h-6 w-16" />
@@ -103,7 +99,7 @@ export const ProgressSkeleton = () => {
         </div>
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {[1, 2].map((i) => (
-            <div key={i} className="glass-card p-6">
+            <div key={i} className="bg-card rounded-xl border border-border p-6">
               <Skeleton className="h-6 w-40 mb-4" />
               <Skeleton className="h-64 w-full rounded-lg" />
             </div>
@@ -127,7 +123,7 @@ export const ReportSkeleton = () => {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="p-4 rounded-xl bg-white/5">
+          <div key={i} className="p-4 rounded-xl bg-muted/50">
             <Skeleton className="h-8 w-16 mb-1" />
             <Skeleton className="h-3 w-20" />
           </div>
