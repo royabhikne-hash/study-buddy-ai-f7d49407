@@ -53,6 +53,7 @@ import {
 import StudentReportModal from "@/components/StudentReportModal";
 import StudentRanking from "@/components/StudentRanking";
 import SubscriptionAnalytics from "@/components/SubscriptionAnalytics";
+import AIUsageAnalytics from "@/components/AIUsageAnalytics";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageToggle from "@/components/LanguageToggle";
 import { useDebounce } from "@/hooks/useDebounce";
