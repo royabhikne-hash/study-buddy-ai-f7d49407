@@ -18,19 +18,14 @@ const Landing = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen liquid-bg flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="liquid-loader" />
       </div>
     );
   }
 
   return (
-    <div className="liquid-bg text-foreground">
-      {/* Animated liquid orbs at different depths */}
-      <div className="liquid-orb liquid-orb-blue w-[600px] h-[600px] -top-[200px] -left-[200px]" />
-      <div className="liquid-orb liquid-orb-purple w-[500px] h-[500px] top-[10%] right-[-15%]" style={{ animationDelay: '3s', animationDuration: '18s' }} />
-      <div className="liquid-orb liquid-orb-teal w-[400px] h-[400px] bottom-[5%] left-[15%]" style={{ animationDelay: '6s', animationDuration: '22s' }} />
-      <div className="liquid-orb liquid-orb-indigo w-[350px] h-[350px] top-[60%] right-[10%]" style={{ animationDelay: '9s', animationDuration: '20s' }} />
+    <div className="min-h-screen bg-background text-foreground">
 
       {/* Header */}
       <header className="container mx-auto py-4 px-4 relative z-20">
