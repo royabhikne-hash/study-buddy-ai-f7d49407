@@ -652,13 +652,19 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
     
     if (command.type === 'finish') {
       // If there's an active subject, complete it first
-      if (currentSubject) {
-        setCompletedSubjects(prev => [...prev, currentSubject]);
+      const allSubjects = [...completedSubjects];
+      if (currentSubject && !allSubjects.includes(currentSubject)) {
+        allSubjects.push(currentSubject);
+        setCompletedSubjects(allSubjects);
         setCurrentSubjectState("");
       }
       
-      // Trigger quiz generation for all studied subjects
-      handleEndStudyClick();
+      // Generate per-subject quizzes if multiple subjects were studied
+      if (allSubjects.length > 0) {
+        handlePerSubjectQuiz(allSubjects);
+      } else {
+        handleEndStudyClick();
+      }
       return;
     }
 
