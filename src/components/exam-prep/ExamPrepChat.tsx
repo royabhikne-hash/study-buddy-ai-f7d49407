@@ -511,6 +511,20 @@ const ExamPrepChat: React.FC<Props> = ({ session, studentName, onSendMessage, on
         </Button>
       </div>
 
+      {/* No materials banner */}
+      {!hasMaterials && (
+        <div className="p-3 bg-destructive/10 border-b border-destructive/20">
+          <p className="text-sm text-destructive font-medium text-center">
+            📄 Please upload your study materials first to begin your personalized Exam Prep journey.
+          </p>
+          <div className="flex justify-center mt-2">
+            <Button variant="outline" size="sm" onClick={onBack} className="text-xs">
+              ← Go back to upload materials
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, i) => (
