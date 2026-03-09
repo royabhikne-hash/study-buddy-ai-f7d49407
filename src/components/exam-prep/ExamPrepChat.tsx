@@ -208,12 +208,27 @@ const ExamPrepChat: React.FC<Props> = ({ session, studentName, onSendMessage, on
 
   const handleSend = async () => {
     if (!input.trim() || sending) return;
+    
+    // Block chat if no materials uploaded
+    if (!hasMaterials) {
+      setMessages(prev => [...prev, 
+        { role: 'user', content: input.trim() },
+        { role: 'assistant', content: 'Please upload your study materials first to begin your personalized Exam Prep journey. Go back and upload a PDF, DOCX, or TXT file to get started! 📚' }
+      ]);
+      setInput('');
+      return;
+    }
+    
     const msg = input.trim();
     setInput('');
     stopSpeaking();
     setMessages(prev => [...prev, { role: 'user', content: msg }]);
 
     if (checkForExamTrigger(msg)) {
+      if (!hasMaterials) {
+        setMessages(prev => [...prev, { role: 'assistant', content: 'You need to upload study materials before taking a virtual exam. Please go back and upload your notes or textbook first.' }]);
+        return;
+      }
       setMessages(prev => [...prev, { role: 'assistant', content: 'Great! You said you are ready! Let me generate a virtual exam based on your study material. This will include MCQs, Short Answer, and Long Answer questions. Get ready...' }]);
       setTimeout(() => startVirtualExam(), 1500);
       return;
