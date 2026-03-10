@@ -31,6 +31,7 @@ import {
   Crown,
   BarChart3,
 } from "lucide-react";
+import { Layers } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -55,6 +56,7 @@ import StudentReportModal from "@/components/StudentReportModal";
 import StudentRanking from "@/components/StudentRanking";
 import SubscriptionAnalytics from "@/components/SubscriptionAnalytics";
 import AIUsageAnalytics from "@/components/AIUsageAnalytics";
+import BoardsManagement from "@/components/BoardsManagement";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageToggle from "@/components/LanguageToggle";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -118,7 +120,7 @@ const AdminDashboard = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"schools" | "coaching" | "students" | "reports" | "student-reports" | "rankings" | "subscriptions" | "ai-usage">("schools");
+  const [activeTab, setActiveTab] = useState<"schools" | "coaching" | "students" | "reports" | "student-reports" | "rankings" | "subscriptions" | "ai-usage" | "boards">("schools");
   const [rankings, setRankings] = useState<RankingData[]>([]);
   
   // Coaching centers state
@@ -1120,6 +1122,15 @@ const AdminDashboard = () => {
             <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             AI Costs
           </Button>
+          <Button
+            variant={activeTab === "boards" ? "default" : "outline"}
+            onClick={() => setActiveTab("boards")}
+            size="sm"
+            className="text-xs sm:text-sm whitespace-nowrap"
+          >
+            <Layers className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            Boards
+          </Button>
         </div>
 
         {/* Search & Actions */}
@@ -1609,6 +1620,10 @@ const AdminDashboard = () => {
 
         {activeTab === "ai-usage" && (
           <AIUsageAnalytics />
+        )}
+
+        {activeTab === "boards" && (
+          <BoardsManagement />
         )}
       </main>
 
