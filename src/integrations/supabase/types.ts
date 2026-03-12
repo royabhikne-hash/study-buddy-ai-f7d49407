@@ -1110,6 +1110,94 @@ export type Database = {
           },
         ]
       }
+      study_project_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          project_id: string
+          role: string
+          source_references: Json | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          project_id: string
+          role: string
+          source_references?: Json | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          project_id?: string
+          role?: string
+          source_references?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_project_messages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "study_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_projects: {
+        Row: {
+          ai_faqs: Json | null
+          ai_key_concepts: Json | null
+          ai_study_guide: Json | null
+          ai_summary: string | null
+          created_at: string
+          description: string | null
+          id: string
+          processing_status: string
+          student_id: string
+          target_date: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_faqs?: Json | null
+          ai_key_concepts?: Json | null
+          ai_study_guide?: Json | null
+          ai_summary?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          processing_status?: string
+          student_id: string
+          target_date?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_faqs?: Json | null
+          ai_key_concepts?: Json | null
+          ai_study_guide?: Json | null
+          ai_summary?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          processing_status?: string
+          student_id?: string
+          target_date?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_projects_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_sessions: {
         Row: {
           ai_summary: string | null
@@ -1165,6 +1253,66 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "study_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_sources: {
+        Row: {
+          created_at: string
+          extracted_content: string | null
+          file_name: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          processing_status: string
+          project_id: string
+          source_type: string
+          student_id: string
+          title: string
+          web_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          extracted_content?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          processing_status?: string
+          project_id: string
+          source_type?: string
+          student_id: string
+          title: string
+          web_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          extracted_content?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          processing_status?: string
+          project_id?: string
+          source_type?: string
+          student_id?: string
+          title?: string
+          web_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_sources_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "study_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_sources_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "students"
