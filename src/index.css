@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 100% 97%;
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
@@ -15,16 +15,16 @@
 
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
+    --secondary: 214 80% 94%;
     --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
+    --muted: 214 60% 95%;
     --muted-foreground: 215 16% 47%;
     --accent: 160 84% 39%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --border: 214 40% 88%;
+    --input: 214 40% 92%;
     --ring: 221 83% 53%;
     --radius: 0.75rem;
 
@@ -41,42 +41,43 @@
 
     --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(262 68% 52%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(160 84% 48%) 100%);
+    --gradient-bg: linear-gradient(180deg, hsl(210 100% 97%) 0%, hsl(214 90% 94%) 100%);
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+    --shadow-sm: 0 1px 3px rgba(59, 130, 246, 0.08);
+    --shadow-md: 0 4px 12px -2px rgba(59, 130, 246, 0.12), 0 2px 4px -2px rgba(59, 130, 246, 0.06);
+    --shadow-lg: 0 10px 25px -5px rgba(59, 130, 246, 0.15), 0 4px 10px -4px rgba(59, 130, 246, 0.08);
+    --shadow-xl: 0 20px 40px -8px rgba(59, 130, 246, 0.18), 0 8px 16px -6px rgba(59, 130, 246, 0.1);
 
-    --sidebar-background: 0 0% 100%;
+    --sidebar-background: 210 80% 96%;
     --sidebar-foreground: 222 47% 11%;
     --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent: 214 60% 92%;
     --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
+    --sidebar-border: 214 40% 88%;
     --sidebar-ring: 221 83% 53%;
   }
 
   .dark {
-    --background: 222 47% 6%;
+    --background: 220 50% 8%;
     --foreground: 210 40% 96%;
-    --card: 222 47% 9%;
+    --card: 220 45% 12%;
     --card-foreground: 210 40% 96%;
-    --popover: 222 47% 9%;
+    --popover: 220 45% 12%;
     --popover-foreground: 210 40% 96%;
 
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 217 33% 17%;
+    --secondary: 220 40% 18%;
     --secondary-foreground: 210 40% 96%;
-    --muted: 217 33% 14%;
+    --muted: 220 35% 15%;
     --muted-foreground: 215 20% 55%;
     --accent: 160 84% 45%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 96%;
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
+    --border: 220 35% 20%;
+    --input: 220 35% 20%;
     --ring: 217 91% 60%;
 
     --edu-blue: 217 91% 60%;
@@ -92,19 +93,20 @@
 
     --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(262 72% 62%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(160 84% 45%) 0%, hsl(160 84% 52%) 100%);
+    --gradient-bg: linear-gradient(180deg, hsl(220 50% 8%) 0%, hsl(220 45% 12%) 100%);
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.45);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 20px 40px -8px rgba(0, 0, 0, 0.7);
 
-    --sidebar-background: 222 47% 6%;
+    --sidebar-background: 220 50% 8%;
     --sidebar-foreground: 210 40% 96%;
     --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent: 220 40% 18%;
     --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 217 33% 18%;
+    --sidebar-border: 220 35% 20%;
     --sidebar-ring: 217 91% 60%;
   }
 }
@@ -120,8 +122,11 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--gradient-bg);
+    background-attachment: fixed;
+    min-height: 100vh;
     padding-top: env(safe-area-inset-top, 0px);
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
@@ -160,45 +165,61 @@
 
   /* ▸ EDU CARD ─────────────────────────────────── */
   .edu-card {
-    @apply bg-card rounded-xl border border-border shadow-sm transition-all duration-200;
+    @apply bg-card rounded-2xl border border-border transition-all duration-300;
+    box-shadow: var(--shadow-md);
+    transform: perspective(1000px) rotateX(0deg);
   }
   .edu-card:hover {
-    @apply shadow-md;
-    transform: translateY(-1px);
+    box-shadow: var(--shadow-xl);
+    transform: perspective(1000px) rotateX(-1deg) translateY(-4px);
+  }
+  .edu-card:active {
+    transform: perspective(1000px) scale(0.98);
   }
 
   .glass {
-    @apply bg-card/80 backdrop-blur-sm border border-border;
+    @apply backdrop-blur-xl border border-border;
+    background: hsl(var(--card) / 0.7);
   }
   .glass-card {
-    @apply bg-card rounded-xl border border-border shadow-sm transition-all duration-200;
+    @apply rounded-2xl border border-border transition-all duration-300;
+    background: hsl(var(--card) / 0.85);
+    backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow: var(--shadow-md), inset 0 1px 0 0 hsl(0 0% 100% / 0.1);
   }
   .glass-card:hover {
-    @apply shadow-md;
-    transform: translateY(-1px);
+    box-shadow: var(--shadow-xl), inset 0 1px 0 0 hsl(0 0% 100% / 0.15);
+    transform: translateY(-4px);
   }
   .glass-nav {
-    @apply bg-card/95 backdrop-blur-md border-border;
+    @apply backdrop-blur-xl border-border;
+    background: hsl(var(--card) / 0.9);
   }
 
   /* ▸ BUTTONS ──────────────────────────────────── */
   .edu-button-primary {
-    @apply text-primary-foreground font-semibold rounded-xl px-6 py-3 transition-all duration-200;
+    @apply text-primary-foreground font-semibold rounded-2xl px-6 py-3 transition-all duration-300;
     background: var(--gradient-primary);
-    box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
+    box-shadow: 0 4px 15px hsl(var(--primary) / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.15);
   }
   .edu-button-primary:hover {
-    box-shadow: 0 4px 16px hsl(var(--primary) / 0.35);
-    transform: translateY(-1px);
+    box-shadow: 0 8px 25px hsl(var(--primary) / 0.4), inset 0 1px 0 hsl(0 0% 100% / 0.2);
+    transform: translateY(-2px) scale(1.02);
   }
-  .edu-button-primary:active { transform: translateY(0); }
+  .edu-button-primary:active { transform: translateY(0) scale(0.98); }
 
   .edu-button-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 font-semibold rounded-xl px-6 py-3 transition-all duration-200;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 font-semibold rounded-2xl px-6 py-3 transition-all duration-300;
+    box-shadow: var(--shadow-sm);
+  }
+  .edu-button-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
   }
   .edu-button-accent {
-    @apply text-accent-foreground font-semibold rounded-xl px-6 py-3 transition-all duration-200;
+    @apply text-accent-foreground font-semibold rounded-2xl px-6 py-3 transition-all duration-300;
     background: var(--gradient-success);
+    box-shadow: 0 4px 15px hsl(var(--accent) / 0.3);
   }
 
   /* ▸ INPUTS ───────────────────────────────────── */
@@ -228,38 +249,53 @@
   }
 
   /* ▸ QUIZ OPTIONS ─────────────────────────────── */
-  .quiz-option { @apply w-full text-left p-4 rounded-xl border-2 transition-all duration-200 text-sm font-medium; }
+  .quiz-option { @apply w-full text-left p-4 rounded-2xl border-2 transition-all duration-300 text-sm font-medium; }
   .quiz-option-default { @apply border-border bg-card; }
   .quiz-option-default:hover {
     @apply border-primary/30 bg-primary/5;
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
   }
   .quiz-option-selected {
     @apply border-primary bg-primary/10;
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
   }
   .quiz-option-correct {
     @apply border-accent bg-accent/10;
+    box-shadow: 0 0 0 3px hsl(var(--accent) / 0.15);
   }
   .quiz-option-wrong {
     @apply border-destructive bg-destructive/10;
+    box-shadow: 0 0 0 3px hsl(var(--destructive) / 0.15);
   }
 
   /* ▸ STAT CARDS ───────────────────────────────── */
-  .stat-card { @apply edu-card p-5 transition-all duration-200; }
-  .stat-card:hover { transform: translateY(-2px); @apply shadow-md; }
+  .stat-card {
+    @apply edu-card p-5 transition-all duration-300;
+    transform: perspective(800px) rotateY(0deg);
+  }
+  .stat-card:hover {
+    transform: perspective(800px) rotateY(-2deg) translateY(-4px);
+    box-shadow: var(--shadow-xl);
+  }
   .stat-card-accent {
-    @apply stat-card border-accent/20 bg-accent/5;
+    @apply stat-card border-accent/20;
+    background: linear-gradient(135deg, hsl(var(--accent) / 0.05) 0%, hsl(var(--card)) 100%);
   }
   .stat-card-primary {
-    @apply stat-card border-primary/20 bg-primary/5;
+    @apply stat-card border-primary/20;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, hsl(var(--card)) 100%);
   }
 
   /* ▸ PROGRESS BAR ─────────────────────────────── */
   .progress-bar {
-    @apply h-2.5 rounded-full overflow-hidden bg-muted;
+    @apply h-3 rounded-full overflow-hidden bg-muted;
+    box-shadow: inset 0 2px 4px hsl(var(--foreground) / 0.05);
   }
   .progress-bar-fill {
-    @apply h-full rounded-full transition-all duration-500 ease-out;
+    @apply h-full rounded-full transition-all duration-700 ease-out;
     background: var(--gradient-primary);
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
   }
 
   /* ▸ STATUS BADGES ────────────────────────────── */
