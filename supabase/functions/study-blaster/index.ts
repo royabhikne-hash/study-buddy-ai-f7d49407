@@ -1,0 +1,368 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  try {
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    const { action, projectId, messages, content } = await req.json();
+
+    // Validate user
+    const anonClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!);
+    const { data: { user }, error: authError } = await anonClient.auth.getUser(authHeader.replace("Bearer ", ""));
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    // Get student
+    const { data: student } = await supabase
+      .from("students")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+    if (!student) {
+      return new Response(JSON.stringify({ error: "Student not found" }), {
+        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    // Rate limit check
+    const { data: allowed } = await supabase.rpc("check_ai_rate_limit", {
+      p_user_id: student.id,
+      p_action: "study_blaster",
+      p_max_requests: 30,
+      p_window_minutes: 5,
+    });
+    if (!allowed) {
+      return new Response(JSON.stringify({ error: "Rate limit exceeded. Please wait a few minutes." }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    if (action === "analyze_sources") {
+      // Fetch all sources for this project
+      const { data: sources } = await supabase
+        .from("study_sources")
+        .select("*")
+        .eq("project_id", projectId)
+        .eq("student_id", student.id);
+
+      if (!sources || sources.length === 0) {
+        return new Response(JSON.stringify({ error: "No sources found" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      const combinedContent = sources
+        .map(s => `[Source: ${s.title}]\n${s.extracted_content || "No content extracted"}`)
+        .join("\n\n---\n\n");
+
+      // Get project target date
+      const { data: project } = await supabase
+        .from("study_projects")
+        .select("target_date, title")
+        .eq("id", projectId)
+        .single();
+
+      const targetDateInfo = project?.target_date 
+        ? `The student's target completion date is: ${project.target_date}. Provide time-based guidance.` 
+        : "";
+
+      const analysisPrompt = `You are an expert study assistant. Analyze the following study materials and generate:
+1. "key_concepts": An array of the top 8-12 key concepts/topics (each as a short string)
+2. "summary": A comprehensive 3-5 paragraph summary of all the materials combined
+3. "study_guide": An array of 5-8 study guide items, each with "topic" and "explanation" fields
+4. "faqs": An array of 8-10 frequently asked questions with "question" and "answer" fields based on the material
+
+${targetDateInfo}
+
+Return ONLY valid JSON with these exact keys. No markdown formatting.
+
+MATERIALS:
+${combinedContent.substring(0, 80000)}`;
+
+      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: "You are an expert educational content analyzer. Always respond with valid JSON only." },
+            { role: "user", content: analysisPrompt },
+          ],
+          tools: [
+            {
+              type: "function",
+              function: {
+                name: "generate_study_analysis",
+                description: "Generate study analysis from source materials",
+                parameters: {
+                  type: "object",
+                  properties: {
+                    key_concepts: { type: "array", items: { type: "string" } },
+                    summary: { type: "string" },
+                    study_guide: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          topic: { type: "string" },
+                          explanation: { type: "string" },
+                        },
+                        required: ["topic", "explanation"],
+                      },
+                    },
+                    faqs: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          question: { type: "string" },
+                          answer: { type: "string" },
+                        },
+                        required: ["question", "answer"],
+                      },
+                    },
+                  },
+                  required: ["key_concepts", "summary", "study_guide", "faqs"],
+                  additionalProperties: false,
+                },
+              },
+            },
+          ],
+          tool_choice: { type: "function", function: { name: "generate_study_analysis" } },
+        }),
+      });
+
+      if (!aiResponse.ok) {
+        const status = aiResponse.status;
+        if (status === 429) {
+          return new Response(JSON.stringify({ error: "AI rate limit exceeded. Please try again later." }), {
+            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+        if (status === 402) {
+          return new Response(JSON.stringify({ error: "AI credits exhausted. Please add funds." }), {
+            status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+        throw new Error("AI gateway error");
+      }
+
+      const aiData = await aiResponse.json();
+      const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+      let analysis;
+      
+      if (toolCall) {
+        analysis = JSON.parse(toolCall.function.arguments);
+      } else {
+        // Fallback: parse from content
+        const raw = aiData.choices?.[0]?.message?.content || "{}";
+        analysis = JSON.parse(raw.replace(/```json\n?/g, "").replace(/```\n?/g, ""));
+      }
+
+      // Update project with AI analysis
+      await supabase
+        .from("study_projects")
+        .update({
+          ai_summary: analysis.summary,
+          ai_key_concepts: analysis.key_concepts,
+          ai_study_guide: analysis.study_guide,
+          ai_faqs: analysis.faqs,
+          processing_status: "completed",
+        })
+        .eq("id", projectId);
+
+      // Log usage
+      await supabase.from("ai_usage_log").insert({
+        student_id: student.id,
+        action: "study_blaster_analyze",
+        model: "google/gemini-3-flash-preview",
+        input_tokens: combinedContent.length,
+        output_tokens: JSON.stringify(analysis).length,
+        estimated_cost_inr: 0.5,
+      });
+
+      return new Response(JSON.stringify({ success: true, analysis }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+
+    } else if (action === "chat") {
+      // Source-grounded chat
+      const { data: sources } = await supabase
+        .from("study_sources")
+        .select("title, extracted_content")
+        .eq("project_id", projectId)
+        .eq("student_id", student.id);
+
+      const combinedContent = (sources || [])
+        .map(s => `[Source: ${s.title}]\n${s.extracted_content || ""}`)
+        .join("\n\n---\n\n");
+
+      const { data: project } = await supabase
+        .from("study_projects")
+        .select("title, target_date, ai_summary")
+        .eq("id", projectId)
+        .single();
+
+      const targetInfo = project?.target_date
+        ? `Student's target date: ${project.target_date}. Guide them accordingly.`
+        : "";
+
+      const systemPrompt = `You are Study Blaster AI - an expert study tutor. You MUST ONLY answer based on the provided source materials below. If a question cannot be answered from these materials, clearly state: "This information is not available in your uploaded sources."
+
+When answering:
+- Always reference which source the information comes from
+- Be concise but thorough
+- Use simple language appropriate for students
+- If asked, generate practice questions from the materials
+- Never make up information not in the sources
+
+${targetInfo}
+
+PROJECT: ${project?.title || "Study Project"}
+
+SOURCE MATERIALS:
+${combinedContent.substring(0, 60000)}`;
+
+      const chatMessages = [
+        { role: "system", content: systemPrompt },
+        ...(messages || []).map((m: any) => ({ role: m.role, content: m.content })),
+      ];
+
+      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: chatMessages,
+          stream: true,
+        }),
+      });
+
+      if (!aiResponse.ok) {
+        const status = aiResponse.status;
+        if (status === 429) {
+          return new Response(JSON.stringify({ error: "Rate limit exceeded, please try again later." }), {
+            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+        if (status === 402) {
+          return new Response(JSON.stringify({ error: "Payment required, please add funds." }), {
+            status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+        throw new Error("AI gateway error");
+      }
+
+      // Log usage
+      await supabase.from("ai_usage_log").insert({
+        student_id: student.id,
+        action: "study_blaster_chat",
+        model: "google/gemini-3-flash-preview",
+        input_tokens: JSON.stringify(chatMessages).length,
+        output_tokens: 0,
+        estimated_cost_inr: 0.3,
+      });
+
+      return new Response(aiResponse.body, {
+        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      });
+
+    } else if (action === "process_url") {
+      // Extract content from URL
+      const { sourceId, url } = await req.json().catch(() => ({ sourceId: null, url: content }));
+      
+      const extractPrompt = `Extract and summarize the main educational content from this URL: ${content || url}. Return the key text content suitable for study purposes. If you cannot access the URL, explain why.`;
+
+      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: "You are a content extraction specialist. Extract and organize educational content from web pages." },
+            { role: "user", content: extractPrompt },
+          ],
+        }),
+      });
+
+      if (!aiResponse.ok) throw new Error("Failed to process URL");
+
+      const aiData = await aiResponse.json();
+      const extractedContent = aiData.choices?.[0]?.message?.content || "";
+
+      return new Response(JSON.stringify({ success: true, extractedContent }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+
+    } else if (action === "process_text") {
+      // Process uploaded text/document content
+      const extractPrompt = `Organize and structure the following study material content. Preserve all important information, formulas, definitions, and key points:\n\n${content?.substring(0, 80000)}`;
+
+      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: "You are an educational content organizer. Structure and preserve all study material content." },
+            { role: "user", content: extractPrompt },
+          ],
+        }),
+      });
+
+      if (!aiResponse.ok) throw new Error("Failed to process text");
+
+      const aiData = await aiResponse.json();
+      const extractedContent = aiData.choices?.[0]?.message?.content || "";
+
+      return new Response(JSON.stringify({ success: true, extractedContent }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    return new Response(JSON.stringify({ error: "Invalid action" }), {
+      status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+
+  } catch (e) {
+    console.error("study-blaster error:", e);
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+  }
+});

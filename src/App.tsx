@@ -27,6 +27,7 @@ import WeeklyTest from "./pages/WeeklyTest";
 import ParentDashboard from "./pages/ParentDashboard";
 import NotFound from "./pages/NotFound";
 import ExamPrep from "./pages/ExamPrep";
+import StudyBlaster from "./pages/StudyBlaster";
 import AppErrorBoundary from "@/components/AppErrorBoundary";
 import GlobalErrorHandlers from "@/components/GlobalErrorHandlers";
 
@@ -61,6 +62,7 @@ const App = () => (
                   <Route path="/admin-dashboard" element={<AdminDashboard />} />
                   <Route path="/parent-view" element={<ParentDashboard />} />
                   <Route path="/exam-prep" element={<ExamPrep />} />
+                  <Route path="/study-blaster" element={<StudyBlaster />} />
                   <Route path="/terms" element={<TermsConditions />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/reset-password" element={<ResetPassword />} />

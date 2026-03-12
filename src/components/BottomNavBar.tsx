@@ -1,13 +1,13 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, BookOpen, Brain, BarChart3, User } from "lucide-react";
+import { Home, BookOpen, Brain, BarChart3, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { path: "/dashboard", icon: Home, label: "Home" },
   { path: "/study", icon: BookOpen, label: "Study" },
+  { path: "/study-blaster", icon: Sparkles, label: "Blaster" },
   { path: "/mcq-practice", icon: Brain, label: "MCQ" },
   { path: "/progress", icon: BarChart3, label: "Progress" },
-  { path: "/profile", icon: User, label: "Profile" },
 ];
 
 const BottomNavBar = () => {

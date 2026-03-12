@@ -1,1 +1,4 @@
 project_id = "vcsrcpqealxgsckbckkz"
+
+[functions.study-blaster]
+verify_jwt = false
