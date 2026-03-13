@@ -208,7 +208,7 @@ const handler = async (req: Request): Promise<Response> => {
           .from('daily_usage').select('*')
           .eq('student_id', body.studentId).eq('usage_date', todayIST).maybeSingle();
 
-        const plan = subscription?.plan || (studentInfo?.student_type === 'coaching_student' ? 'starter' : 'basic');
+        const plan = subscription?.plan || 'basic';
         const limits = PLAN_LIMITS[plan] || PLAN_LIMITS.basic;
 
         return new Response(
