@@ -125,7 +125,7 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
     {
       id: "1",
       role: "assistant",
-      content: "Hey there! I'm your Study Buddy! 📚\n\nTo start studying, just say:\n- \"Start Computer\" or \"Start History\" etc.\n\nWhen you finish a subject, say:\n- \"Computer done\" or \"History done\"\n\nTo end your session and take quizzes, say:\n- \"Finish study\"\n\nSo, what do you want to study today?",
+      content: "Hello! Welcome back! 🎓\n\nAaj kya padhna hai? Bas subject ka naam bolo aur hum shuru karte hain!\n\nExample: \"Start Science\" ya \"Start Maths\"\n\nJab subject khatam ho jaye toh bolo \"Science done\", aur poori padhai ke baad \"Finish study\" bolke quiz lo! 💪",
       timestamp: new Date(),
     },
   ]);
