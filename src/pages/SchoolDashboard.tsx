@@ -1409,7 +1409,7 @@ const SchoolDashboard = () => {
           <TabsContent value="analytics" className="mt-4 sm:mt-6">
             <SchoolAnalytics 
               schoolUuid={schoolUuid || ""} 
-              sessionToken={localStorage.getItem("sessionToken") || ""} 
+              sessionToken={localStorage.getItem("schoolSessionToken") || localStorage.getItem("coachingSessionToken") || ""} 
             />
           </TabsContent>
         </Tabs>
