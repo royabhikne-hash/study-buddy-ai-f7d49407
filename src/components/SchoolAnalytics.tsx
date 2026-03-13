@@ -38,8 +38,9 @@ const SchoolAnalytics = ({ schoolUuid, sessionToken }: SchoolAnalyticsProps) => 
       const { data, error } = await supabase.functions.invoke("get-students", {
         body: {
           action: "get_school_analytics",
-          schoolId: schoolUuid,
-          sessionToken,
+          school_id: schoolUuid,
+          session_token: sessionToken,
+          user_type: "school",
         },
       });
 
