@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageToggle from "@/components/LanguageToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import DailyUsageWidget from "@/components/DailyUsageWidget";
+import SubscriptionCard from "@/components/SubscriptionCard";
 
 interface StudentData {
   id: string;
