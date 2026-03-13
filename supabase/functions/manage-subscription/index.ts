@@ -699,11 +699,9 @@ const handler = async (req: Request): Promise<Response> => {
             .from('subscriptions').select('plan, students!inner(coaching_center_id)')
             .eq('students.coaching_center_id', cc.id);
 
-          const starterCount = subs?.filter(s => s.plan === 'starter').length || 0;
-          const basicCount = subs?.filter(s => s.plan === 'basic').length || 0;
+          const basicCount = (subs?.filter(s => s.plan === 'basic').length || 0) + (subs?.filter(s => s.plan === 'starter').length || 0);
           const proCount = subs?.filter(s => s.plan === 'pro').length || 0;
-          const estimatedRevenue = (starterCount * PLAN_LIMITS.starter.monthlyPrice) +
-            (basicCount * PLAN_LIMITS.basic.monthlyPrice) + (proCount * PLAN_LIMITS.pro.monthlyPrice);
+          const estimatedRevenue = (basicCount * PLAN_LIMITS.basic.monthlyPrice) + (proCount * PLAN_LIMITS.pro.monthlyPrice);
 
           return {
             ...cc, type: 'coaching', totalStudents: totalStudents || 0,
