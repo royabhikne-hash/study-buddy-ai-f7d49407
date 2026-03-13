@@ -25,7 +25,7 @@ export const UpgradePopup = ({ open, onClose, studentId, limitType }: UpgradePop
   const { subscription, studentType, requestUpgrade } = useSubscription(studentId);
 
   const isCoaching = studentType === 'coaching_student';
-  const currentPlan = subscription?.plan || 'starter';
+  const currentPlan = subscription?.plan || 'basic';
 
   const handleUpgrade = async (plan: string) => {
     setRequesting(true);
