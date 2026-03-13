@@ -23,8 +23,8 @@ import {
 } from "lucide-react";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import StudentRankingCard from "@/components/StudentRankingCard";
-import SubscriptionCard from "@/components/SubscriptionCard";
-import DailyUsageWidget from "@/components/DailyUsageWidget";
+
+
 import { ThemeToggle } from "@/components/ThemeToggle";
 import BottomNavBar from "@/components/BottomNavBar";
 
@@ -557,11 +557,6 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        {/* Daily Usage & Subscription */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <DailyUsageWidget studentId={studentId} />
-          <SubscriptionCard studentId={studentId} onRefresh={loadStudentData} />
-        </div>
 
         {/* Main Tabs: Study / Rankings */}
         <Tabs value={mainTab} onValueChange={(v) => setMainTab(v as "study" | "rankings")} className="mb-6">

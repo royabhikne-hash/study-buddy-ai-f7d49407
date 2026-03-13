@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageToggle from "@/components/LanguageToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import DailyUsageWidget from "@/components/DailyUsageWidget";
+import SubscriptionCard from "@/components/SubscriptionCard";
 
 interface StudentData {
   id: string;
@@ -243,6 +245,12 @@ const StudentProfile = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Daily Usage & Subscription Plan */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <DailyUsageWidget studentId={studentData.id} />
+          <SubscriptionCard studentId={studentData.id} onRefresh={loadStudentData} />
         </div>
 
         {/* School Info (Read-only) */}
