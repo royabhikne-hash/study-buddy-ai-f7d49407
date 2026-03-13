@@ -173,7 +173,7 @@ export const SubscriptionCard = ({ studentId, onRefresh }: SubscriptionCardProps
             ) : (
               <ArrowUpCircle className="w-4 h-4 mr-2" />
             )}
-            Request Pro Plan (₹199/month)
+            Request Pro Plan (₹299/month)
           </Button>
         </div>
       )}
