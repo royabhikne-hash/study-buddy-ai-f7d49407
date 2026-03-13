@@ -24,7 +24,7 @@ import {
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import StudentRankingCard from "@/components/StudentRankingCard";
 
-import DailyUsageWidget from "@/components/DailyUsageWidget";
+
 import { ThemeToggle } from "@/components/ThemeToggle";
 import BottomNavBar from "@/components/BottomNavBar";
 
