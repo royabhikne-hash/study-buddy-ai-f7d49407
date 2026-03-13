@@ -7,9 +7,8 @@ const corsHeaders = {
 
 // Plan limits configuration
 const PLAN_LIMITS: Record<string, { chatsPerDay: number; imagesPerDay: number; premiumTTS: boolean; monthlyPrice: number }> = {
-  starter: { chatsPerDay: 15, imagesPerDay: 2, premiumTTS: false, monthlyPrice: 50 },
-  basic: { chatsPerDay: 40, imagesPerDay: 6, premiumTTS: false, monthlyPrice: 99 },
-  pro: { chatsPerDay: 70, imagesPerDay: 12, premiumTTS: true, monthlyPrice: 199 },
+  basic: { chatsPerDay: 40, imagesPerDay: 6, premiumTTS: false, monthlyPrice: 149 },
+  pro: { chatsPerDay: 70, imagesPerDay: 12, premiumTTS: true, monthlyPrice: 299 },
 };
 
 type SubscriptionAction =
@@ -209,7 +208,7 @@ const handler = async (req: Request): Promise<Response> => {
           .from('daily_usage').select('*')
           .eq('student_id', body.studentId).eq('usage_date', todayIST).maybeSingle();
 
-        const plan = subscription?.plan || (studentInfo?.student_type === 'coaching_student' ? 'starter' : 'basic');
+        const plan = subscription?.plan || 'basic';
         const limits = PLAN_LIMITS[plan] || PLAN_LIMITS.basic;
 
         return new Response(
@@ -368,7 +367,7 @@ const handler = async (req: Request): Promise<Response> => {
           );
         }
 
-        let reason = "Basic/Starter plan";
+        let reason = "Basic plan";
         if (isPro && !hasQuota) reason = "TTS limit reached";
         if (isPro && isExpired) reason = "Subscription expired";
 
@@ -595,7 +594,7 @@ const handler = async (req: Request): Promise<Response> => {
           .from('students').select('student_type')
           .eq('id', body.studentId).maybeSingle();
 
-        const downgradePlan = studentInfo?.student_type === 'coaching_student' ? 'starter' : 'basic';
+        const downgradePlan = 'basic';
 
         await admin.from('subscriptions')
           .update({ plan: downgradePlan, end_date: null, is_active: true })
@@ -639,7 +638,7 @@ const handler = async (req: Request): Promise<Response> => {
           .from('students').select('student_type')
           .eq('id', body.studentId).maybeSingle();
 
-        const downgradePlan = studentInfo?.student_type === 'coaching_student' ? 'starter' : 'basic';
+        const downgradePlan = 'basic';
 
         await admin.from('subscriptions')
           .update({ plan: downgradePlan, end_date: null, is_active: true })
@@ -700,15 +699,13 @@ const handler = async (req: Request): Promise<Response> => {
             .from('subscriptions').select('plan, students!inner(coaching_center_id)')
             .eq('students.coaching_center_id', cc.id);
 
-          const starterCount = subs?.filter(s => s.plan === 'starter').length || 0;
-          const basicCount = subs?.filter(s => s.plan === 'basic').length || 0;
+          const basicCount = (subs?.filter(s => s.plan === 'basic').length || 0) + (subs?.filter(s => s.plan === 'starter').length || 0);
           const proCount = subs?.filter(s => s.plan === 'pro').length || 0;
-          const estimatedRevenue = (starterCount * PLAN_LIMITS.starter.monthlyPrice) +
-            (basicCount * PLAN_LIMITS.basic.monthlyPrice) + (proCount * PLAN_LIMITS.pro.monthlyPrice);
+          const estimatedRevenue = (basicCount * PLAN_LIMITS.basic.monthlyPrice) + (proCount * PLAN_LIMITS.pro.monthlyPrice);
 
           return {
             ...cc, type: 'coaching', totalStudents: totalStudents || 0,
-            starterUsers: starterCount, basicUsers: basicCount, proUsers: proCount, estimatedRevenue
+            starterUsers: 0, basicUsers: basicCount, proUsers: proCount, estimatedRevenue
           };
         }));
 
@@ -739,7 +736,7 @@ const handler = async (req: Request): Promise<Response> => {
               .from('students').select('student_type')
               .eq('id', sub.student_id).maybeSingle();
 
-            const downgradePlan = student?.student_type === 'coaching_student' ? 'starter' : 'basic';
+            const downgradePlan = 'basic';
 
             await admin.from('subscriptions')
               .update({ plan: downgradePlan, end_date: null, is_active: true })
