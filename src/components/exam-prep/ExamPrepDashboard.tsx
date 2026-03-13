@@ -70,11 +70,11 @@ const ExamPrepDashboard: React.FC<Props> = ({
     }
   };
 
-  const menuItems = [
-    { icon: BookOpen, label: 'Daily Study Plan', desc: 'AI-generated schedule', color: 'text-primary' },
-    { icon: Brain, label: 'Personal AI Tutor', desc: 'Chat with your tutor', color: 'text-accent' },
-    { icon: GraduationCap, label: 'Intro Lessons', desc: 'Learn new concepts', color: 'text-[hsl(var(--edu-purple))]' },
-    { icon: ClipboardList, label: 'Quizzes & Flashcards', desc: 'Test your knowledge', color: 'text-[hsl(var(--edu-orange))]' },
+  const menuItems: { icon: any; label: string; desc: string; color: string; feature: Feature; needsSession: boolean }[] = [
+    { icon: BookOpen, label: 'Daily Study Plan', desc: 'AI-generated schedule', color: 'text-primary', feature: 'study_plan', needsSession: true },
+    { icon: Brain, label: 'Personal AI Tutor', desc: 'Chat with your tutor', color: 'text-accent', feature: 'tutor', needsSession: true },
+    { icon: GraduationCap, label: 'Intro Lessons', desc: 'Learn new concepts', color: 'text-[hsl(var(--edu-purple))]', feature: 'intro_lessons', needsSession: true },
+    { icon: ClipboardList, label: 'Quizzes & Flashcards', desc: 'Test your knowledge', color: 'text-[hsl(var(--edu-orange))]', feature: 'quizzes', needsSession: true },
   ];
 
   return (
