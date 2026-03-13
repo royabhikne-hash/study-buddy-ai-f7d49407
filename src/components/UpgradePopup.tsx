@@ -67,30 +67,6 @@ export const UpgradePopup = ({ open, onClose, studentId, limitType }: UpgradePop
         </DialogHeader>
 
         <div className="space-y-3 py-2">
-          {/* Show Basic upgrade for coaching students on starter */}
-          {isCoaching && currentPlan === 'starter' && (
-            <div className="border border-border rounded-xl p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="font-semibold">Basic Plan</h4>
-                <span className="text-sm font-bold text-primary">₹99/mo</span>
-              </div>
-              <ul className="text-xs text-muted-foreground space-y-1 mb-3">
-                <li>✅ 60 chats/day</li>
-                <li>✅ 7 images/day</li>
-                <li>📢 Web voice only</li>
-              </ul>
-              <Button 
-                onClick={() => handleUpgrade('basic')} 
-                disabled={requesting} 
-                className="w-full" 
-                size="sm"
-              >
-                {requesting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <ArrowUpCircle className="w-4 h-4 mr-1" />}
-                Request Basic
-              </Button>
-            </div>
-          )}
-
           {/* Show Pro upgrade for everyone */}
           {currentPlan !== 'pro' && (
             <div className="border-2 border-amber-500/30 rounded-xl p-4 bg-gradient-to-br from-amber-500/5 to-orange-500/5">
