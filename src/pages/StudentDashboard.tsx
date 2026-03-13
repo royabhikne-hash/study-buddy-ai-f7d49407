@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import StudentRankingCard from "@/components/StudentRankingCard";
-import SubscriptionCard from "@/components/SubscriptionCard";
+
 import DailyUsageWidget from "@/components/DailyUsageWidget";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import BottomNavBar from "@/components/BottomNavBar";
