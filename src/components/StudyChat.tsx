@@ -588,7 +588,7 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
       const startMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: `Great! Let's start studying ${command.subject}! 📖\n\nAsk me any doubt or question about ${command.subject}. I'm ready to help!\n\nWhen you're done with ${command.subject}, just say "${command.subject} done".`,
+        content: `Chalo ${command.subject} shuru karte hain! 📖\n\nBatao konsa topic ya doubt hai ${command.subject} mein? Main ready hoon help karne ke liye!\n\nJab ${command.subject} ho jaye toh bolo "${command.subject} done" 👍`,
         timestamp: new Date(),
         isTyping: true,
       };
