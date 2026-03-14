@@ -685,7 +685,7 @@ const Signup = () => {
                 </label>
               </div>
 
-              <Button type="submit" variant="hero" className="w-full text-sm sm:text-base" size="lg" disabled={isLoading}>
+              <Button type="submit" variant="hero" className="w-full text-sm sm:text-base shadow-lg shadow-primary/20" size="lg" disabled={isLoading}>
                 {isLoading ? "Creating Account..." : "Create Account & Start Studying"}
               </Button>
             </form>

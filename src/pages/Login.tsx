@@ -285,7 +285,7 @@ const Login = () => {
                   </Link>
                 </div>
               </div>
-              <Button type="submit" variant="hero" className="w-full" size="lg" disabled={isLoading}>
+              <Button type="submit" variant="hero" className="w-full shadow-lg shadow-primary/20" size="lg" disabled={isLoading}>
                 {isLoading ? (language === 'en' ? "Logging in..." : "लॉगिन हो रहा है...") : (language === 'en' ? "Login" : "लॉगिन")}
               </Button>
             </form>
