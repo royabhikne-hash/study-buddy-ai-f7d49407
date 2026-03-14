@@ -531,7 +531,7 @@ const StudentDashboard = () => {
                 <Sparkles className="w-5 h-5 text-accent animate-pulse-slow" style={{ animationDelay: '1s' }} />
               </div>
               
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-2 font-display">
                 Hello, {userName}! 👋
               </h1>
               
@@ -656,13 +656,13 @@ const StudentDashboard = () => {
 
             {/* Recent Sessions */}
             <div className="glass-card p-6">
-              <h2 className="text-lg font-bold mb-4">Recent Study Sessions</h2>
+              <h2 className="text-lg font-bold mb-4 font-display">Recent Study Sessions</h2>
               {recentSessions.length > 0 ? (
                 <div className="space-y-3">
                   {recentSessions.map((session) => (
                     <div
                       key={session.id}
-                      className="flex items-center justify-between p-4 bg-secondary/30 rounded-xl"
+                      className="session-row"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -726,12 +726,12 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
     };
 
     return (
-      <div ref={ref} className="glass-card p-4">
+      <div ref={ref} className="glass-card p-4 card-hover-lift">
         <div className={`w-10 h-10 rounded-lg ${colorClasses[color]} flex items-center justify-center mb-3`}>
           {icon}
         </div>
         <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="text-xl font-bold">{value}</p>
+        <p className="text-xl font-bold font-display">{value}</p>
       </div>
     );
   }
