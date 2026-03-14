@@ -656,7 +656,7 @@ const StudentDashboard = () => {
 
             {/* Recent Sessions */}
             <div className="glass-card p-6">
-              <h2 className="text-lg font-bold mb-4">Recent Study Sessions</h2>
+              <h2 className="text-lg font-bold mb-4 font-display">Recent Study Sessions</h2>
               {recentSessions.length > 0 ? (
                 <div className="space-y-3">
                   {recentSessions.map((session) => (
