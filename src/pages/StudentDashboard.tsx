@@ -531,7 +531,7 @@ const StudentDashboard = () => {
                 <Sparkles className="w-5 h-5 text-accent animate-pulse-slow" style={{ animationDelay: '1s' }} />
               </div>
               
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-2 font-display">
                 Hello, {userName}! 👋
               </h1>
               
