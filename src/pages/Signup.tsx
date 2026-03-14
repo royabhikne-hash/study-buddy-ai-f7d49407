@@ -396,10 +396,10 @@ const Signup = () => {
                       setSelectedSchoolId("");
                       setSelectedCoachingId("");
                     }}
-                    className={`p-3 sm:p-4 rounded-xl border-2 text-center transition-all ${
+                    className={`p-3 sm:p-4 rounded-xl border-2 text-center transition-all duration-300 ${
                       studentType === "school_student"
-                        ? "border-primary bg-primary/10 text-primary font-semibold"
-                        : "border-input hover:border-primary/50"
+                        ? "border-primary bg-primary/10 text-primary font-semibold shadow-md shadow-primary/10"
+                        : "border-input hover:border-primary/50 hover:bg-primary/5"
                     }`}
                   >
                     <span className="text-xl sm:text-2xl block mb-1">🏫</span>
