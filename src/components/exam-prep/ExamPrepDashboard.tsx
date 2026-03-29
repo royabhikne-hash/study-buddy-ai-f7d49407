@@ -32,6 +32,12 @@ const ExamPrepDashboard: React.FC<Props> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadSessionId, setUploadSessionId] = useState<string | null>(null);
 
+  const getMaterialCount = (session: ExamPrepSession) => {
+    const materialCount = session.exam_prep_materials?.length || 0;
+    if (materialCount > 0) return materialCount;
+    return (session.extracted_topics?.length || 0) > 0 ? 1 : 0;
+  };
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, sessionId: string) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -49,15 +55,6 @@ const ExamPrepDashboard: React.FC<Props> = ({
 
       if (uploadErr) throw uploadErr;
 
-      // Save material record
-      await supabase.from('exam_prep_materials' as any).insert({
-        session_id: sessionId,
-        student_id: access.studentId,
-        file_name: file.name,
-        file_url: filePath,
-        file_size: file.size,
-      });
-
       toast({ title: 'Uploaded!', description: 'Now extracting content...' });
 
       setExtracting(sessionId);
@@ -67,6 +64,7 @@ const ExamPrepDashboard: React.FC<Props> = ({
     } catch (err: any) {
       toast({ title: 'Upload failed', description: err.message, variant: 'destructive' });
     } finally {
+      e.target.value = '';
       setUploading(null);
       setExtracting(null);
     }
@@ -101,7 +99,7 @@ const ExamPrepDashboard: React.FC<Props> = ({
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { icon: Upload, label: 'Materials', value: sessions.reduce((a, s) => a + (s.exam_prep_materials?.length || 0), 0) },
+            { icon: Upload, label: 'Materials', value: sessions.reduce((a, s) => a + getMaterialCount(s), 0) },
             { icon: Calendar, label: 'Sessions', value: access.sessionsUsed },
             { icon: Target, label: 'Plan', value: access.plan.toUpperCase() },
           ].map((stat, i) => (
@@ -180,7 +178,7 @@ const ExamPrepDashboard: React.FC<Props> = ({
                 {/* Materials */}
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs text-muted-foreground">
-                    {session.exam_prep_materials?.length || 0} material(s)
+                    {getMaterialCount(session)} material(s)
                   </span>
                   <input
                     type="file"

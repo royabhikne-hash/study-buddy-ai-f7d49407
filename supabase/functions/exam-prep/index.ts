@@ -143,6 +143,38 @@ Deno.serve(async (req) => {
         const { data: fileData } = await supabase.storage
           .from("exam-prep-materials").download(fileUrl);
 
+        const { data: existingMaterial, error: existingMaterialError } = await supabase
+          .from("exam_prep_materials")
+          .select("id")
+          .eq("session_id", sessionId)
+          .eq("file_url", fileUrl)
+          .limit(1)
+          .maybeSingle();
+
+        if (existingMaterialError) throw existingMaterialError;
+
+        if (existingMaterial?.id) {
+          const { error: materialUpdateError } = await supabase
+            .from("exam_prep_materials")
+            .update({ processing_status: "processing" })
+            .eq("id", existingMaterial.id);
+
+          if (materialUpdateError) throw materialUpdateError;
+        } else {
+          const { error: materialInsertError } = await supabase
+            .from("exam_prep_materials")
+            .insert({
+              session_id: sessionId,
+              student_id: student.id,
+              file_name: fileName,
+              file_url: fileUrl,
+              file_size: fileData?.size ?? 0,
+              processing_status: "processing",
+            });
+
+          if (materialInsertError) throw materialInsertError;
+        }
+
         let textContent = "";
         if (fileData) textContent = await fileData.text();
 
@@ -175,7 +207,7 @@ Deno.serve(async (req) => {
         await supabase.from("exam_prep_materials").update({
           extracted_content: textContent.substring(0, 50000),
           extracted_topics: extracted.topics, processing_status: "completed",
-        }).eq("session_id", sessionId).eq("file_name", fileName);
+        }).eq("session_id", sessionId).eq("file_url", fileUrl);
 
         await supabase.from("exam_prep_sessions")
           .update({ extracted_topics: extracted.topics }).eq("id", sessionId);
