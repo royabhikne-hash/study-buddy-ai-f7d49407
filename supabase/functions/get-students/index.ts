@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
       if (!student_id) {
         return new Response(
           JSON.stringify({ error: 'Student ID required' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -137,7 +137,7 @@ Deno.serve(async (req) => {
       if (!studentData || !studentData.is_approved) {
         return new Response(
           JSON.stringify({ error: 'Student not found or not approved' }),
-          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -237,7 +237,7 @@ Deno.serve(async (req) => {
       if (!isAuthorized) {
         return new Response(
           JSON.stringify({ error: 'Unauthorized' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -252,7 +252,7 @@ Deno.serve(async (req) => {
       if (user_type === 'school' && studentData?.school_id !== authorizedSchoolId) {
         return new Response(
           JSON.stringify({ error: 'Student does not belong to your school' }),
-          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -343,7 +343,7 @@ Deno.serve(async (req) => {
       if (!session_token) {
         return new Response(
           JSON.stringify({ error: 'Session token required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
@@ -354,7 +354,7 @@ Deno.serve(async (req) => {
         if (!schoolValidation.valid) {
           return new Response(
             JSON.stringify({ error: 'Unauthorized' }),
-            { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
       }
@@ -364,7 +364,7 @@ Deno.serve(async (req) => {
       if (!targetStudentId) {
         return new Response(
           JSON.stringify({ error: 'Student ID required' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -395,7 +395,7 @@ Deno.serve(async (req) => {
         console.error('Error creating parent token:', tokenError);
         return new Response(
           JSON.stringify({ error: 'Failed to create token' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -529,7 +529,7 @@ Deno.serve(async (req) => {
     if (!session_token) {
       return new Response(
         JSON.stringify({ error: 'Session token required' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -539,7 +539,7 @@ Deno.serve(async (req) => {
       if (!validation.valid) {
         return new Response(
           JSON.stringify({ error: 'Invalid or expired school session' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -553,14 +553,14 @@ Deno.serve(async (req) => {
       if (error || !school) {
         return new Response(
           JSON.stringify({ error: 'School not found' }),
-          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
       if (school.is_banned) {
         return new Response(
           JSON.stringify({ error: 'School is banned' }),
-          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -576,7 +576,7 @@ Deno.serve(async (req) => {
         console.error('Error fetching students:', studentsError);
         return new Response(
           JSON.stringify({ error: 'Failed to fetch students' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -669,7 +669,7 @@ Deno.serve(async (req) => {
       if (!validation.valid) {
         return new Response(
           JSON.stringify({ error: 'Invalid or expired coaching session' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -684,7 +684,7 @@ Deno.serve(async (req) => {
       if (studentsError) {
         return new Response(
           JSON.stringify({ error: 'Failed to fetch students' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -723,7 +723,7 @@ Deno.serve(async (req) => {
       if (!validation.valid) {
         return new Response(
           JSON.stringify({ error: 'Invalid or expired admin session' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -737,7 +737,7 @@ Deno.serve(async (req) => {
         console.error('Error fetching students:', studentsError);
         return new Response(
           JSON.stringify({ error: 'Failed to fetch students' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -751,7 +751,7 @@ Deno.serve(async (req) => {
         console.error('Error fetching schools:', schoolsError);
         return new Response(
           JSON.stringify({ error: 'Failed to fetch schools' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -823,19 +823,19 @@ Deno.serve(async (req) => {
       const token = session_token || sessionToken;
       if (!token) {
         return new Response(JSON.stringify({ error: 'Auth required' }), {
-          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       const session = await validateSessionToken(supabaseAdmin, token, 'admin');
       if (!session.valid) {
         return new Response(JSON.stringify({ error: 'Invalid admin session' }), {
-          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       const { board_name, board_state } = await req.clone().then(r => r.json());
       if (!board_name || board_name.trim().length < 2) {
         return new Response(JSON.stringify({ error: 'Board name is required (min 2 chars)' }), {
-          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       const { data, error: insertErr } = await supabaseAdmin
@@ -845,7 +845,7 @@ Deno.serve(async (req) => {
         .single();
       if (insertErr) {
         return new Response(JSON.stringify({ error: insertErr.message }), {
-          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       return new Response(JSON.stringify({ board: data }), {
@@ -857,13 +857,13 @@ Deno.serve(async (req) => {
       const token = session_token || sessionToken;
       if (!token) {
         return new Response(JSON.stringify({ error: 'Auth required' }), {
-          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       const session = await validateSessionToken(supabaseAdmin, token, 'admin');
       if (!session.valid) {
         return new Response(JSON.stringify({ error: 'Invalid admin session' }), {
-          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       const { board_id } = await req.clone().then(r => r.json());
@@ -873,7 +873,7 @@ Deno.serve(async (req) => {
         .eq('id', board_id);
       if (delErr) {
         return new Response(JSON.stringify({ error: delErr.message }), {
-          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
       return new Response(JSON.stringify({ success: true }), {
@@ -883,7 +883,7 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({ error: 'Invalid user type or action' }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {

@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
       if (!schoolId) {
         return new Response(
           JSON.stringify({ error: "school_id is required" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 

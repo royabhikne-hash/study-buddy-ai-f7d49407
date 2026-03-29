@@ -64,7 +64,7 @@ serve(async (req) => {
           error: "Rate limit exceeded. Please wait before generating another quiz.",
           success: false
         }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -165,7 +165,7 @@ OUTPUT FORMAT (strictly valid JSON, no markdown):
         console.error("AI gateway error:", resp.status, errorText);
         if (resp.status === 429) {
           return new Response(JSON.stringify({ error: "Rate limit exceeded.", success: false }),
-            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
         throw new Error(`AI service error: ${resp.status}`);
       }
@@ -292,11 +292,11 @@ ${chatContext || `General study session about ${topic || "various topics"}`}`;
       console.error("AI gateway error:", resp.status, errorText);
       if (resp.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded.", success: false }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
       if (resp.status === 402) {
         return new Response(JSON.stringify({ error: "AI credits exhausted.", success: false }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
       throw new Error(`AI service error: ${resp.status}`);
     }

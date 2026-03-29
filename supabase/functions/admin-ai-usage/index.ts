@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
 
     if (!session || session.is_revoked || new Date(session.expires_at) < new Date() || session.user_type !== "admin") {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
+        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

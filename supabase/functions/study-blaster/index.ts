@@ -20,7 +20,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" }
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
@@ -31,7 +31,7 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await anonClient.auth.getUser(authHeader.replace("Bearer ", ""));
     if (authError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" }
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
@@ -43,7 +43,7 @@ serve(async (req) => {
       .single();
     if (!student) {
       return new Response(JSON.stringify({ error: "Student not found" }), {
-        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" }
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
@@ -56,7 +56,7 @@ serve(async (req) => {
     });
     if (!allowed) {
       return new Response(JSON.stringify({ error: "Rate limit exceeded. Please wait a few minutes." }), {
-        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" }
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
@@ -70,7 +70,7 @@ serve(async (req) => {
 
       if (!sources || sources.length === 0) {
         return new Response(JSON.stringify({ error: "No sources found" }), {
-          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" }
+          status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       }
 
@@ -162,12 +162,12 @@ ${combinedContent.substring(0, 80000)}`;
         const status = aiResponse.status;
         if (status === 429) {
           return new Response(JSON.stringify({ error: "AI rate limit exceeded. Please try again later." }), {
-            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" }
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
           });
         }
         if (status === 402) {
           return new Response(JSON.stringify({ error: "AI credits exhausted. Please add funds." }), {
-            status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" }
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
           });
         }
         throw new Error("AI gateway error");
@@ -271,12 +271,12 @@ ${combinedContent.substring(0, 60000)}`;
         const status = aiResponse.status;
         if (status === 429) {
           return new Response(JSON.stringify({ error: "Rate limit exceeded, please try again later." }), {
-            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" }
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
           });
         }
         if (status === 402) {
           return new Response(JSON.stringify({ error: "Payment required, please add funds." }), {
-            status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" }
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
           });
         }
         throw new Error("AI gateway error");
@@ -356,13 +356,13 @@ ${combinedContent.substring(0, 60000)}`;
     }
 
     return new Response(JSON.stringify({ error: "Invalid action" }), {
-      status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" }
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
 
   } catch (e) {
     console.error("study-blaster error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" }
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
   }
 });
