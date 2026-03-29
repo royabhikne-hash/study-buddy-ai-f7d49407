@@ -225,26 +225,28 @@ const Login = () => {
       
       if (!mountedRef.current) return;
       
+      // Always navigate to dashboard - let the dashboard handle pending/rejected UI
+      // This prevents the UX deadlock where unapproved students get logged out
       if (student && !student.is_approved) {
         toast({
           title: language === 'en' ? "Approval Pending ⏳" : "अप्रूवल पेंडिंग ⏳",
           description: language === 'en' 
-            ? "Your account is waiting for approval." 
+            ? "Your account is waiting for approval. You can check your status." 
             : "आपका अकाउंट अप्रूवल का इंतज़ार कर रहा है।",
-          variant: "destructive",
         });
-        await supabase.auth.signOut();
-        setIsLoading(false);
-        return;
+      } else {
+        toast({
+          title: language === 'en' ? "Welcome back!" : "वापस स्वागत है!",
+          description: language === 'en' ? "Let's start studying." : "चलो पढ़ाई करते हैं।",
+        });
       }
-
-      toast({
-        title: language === 'en' ? "Welcome back!" : "वापस स्वागत है!",
-        description: language === 'en' ? "Let's start studying." : "चलो पढ़ाई करते हैं।",
-      });
+      
       navigate("/dashboard", { replace: true });
     } catch {
-      if (mountedRef.current) setIsLoading(false);
+      if (mountedRef.current) {
+        // Even on error, navigate to dashboard - let it handle
+        navigate("/dashboard", { replace: true });
+      }
     }
   };
 
