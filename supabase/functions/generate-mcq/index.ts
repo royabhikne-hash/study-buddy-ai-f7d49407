@@ -37,7 +37,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
+        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -55,7 +55,7 @@ serve(async (req) => {
 
     if (studentError || !student) {
       return new Response(JSON.stringify({ error: "Student not found" }), {
-        status: 404,
+        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -107,12 +107,12 @@ Return ONLY a valid JSON array with this exact format, no other text:
       if (!resp.ok) {
         if (resp.status === 429) {
           return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
-            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
         if (resp.status === 402) {
           return new Response(JSON.stringify({ error: "AI credits exhausted." }), {
-            status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
         throw new Error(`AI service error: ${resp.status}`);
@@ -161,7 +161,7 @@ Return ONLY a valid JSON array with this exact format, no other text:
 
       if (existingTest && existingTest.length > 0) {
         return new Response(JSON.stringify({ error: "You already took this week's test.", alreadyTaken: true }), {
-          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
@@ -206,7 +206,7 @@ Return ONLY a valid JSON array with this exact format, no other text:
       
       if (testSubjects.length === 0) {
         return new Response(JSON.stringify({ error: "No subjects studied this week. Study first, then take the weekly test." }), {
-          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
@@ -276,7 +276,7 @@ Return ONLY a valid JSON array:
       if (!resp.ok) {
         if (resp.status === 429) {
           return new Response(JSON.stringify({ error: "Rate limit exceeded." }), {
-            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
         throw new Error(`AI service error: ${resp.status}`);
@@ -367,7 +367,7 @@ Return ONLY a valid JSON array:
     }
 
     return new Response(JSON.stringify({ error: "Invalid action" }), {
-      status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
   } catch (error) {
