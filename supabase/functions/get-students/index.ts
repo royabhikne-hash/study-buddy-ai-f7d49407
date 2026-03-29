@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { action, session_token, user_type, school_id, student_id, student_class, schoolId, sessionToken, studentId } = await req.json();
+    const { action, session_token, user_type, school_id, student_id, student_class, schoolId, sessionToken, studentId, board_name, board_state, board_id } = await req.json();
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -834,7 +834,7 @@ Deno.serve(async (req) => {
           status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
-      const { board_name, board_state } = await req.clone().then(r => r.json());
+      // board_name and board_state already parsed from request body above
       if (!board_name || board_name.trim().length < 2) {
         return new Response(JSON.stringify({ error: 'Board name is required (min 2 chars)' }), {
           status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -868,7 +868,7 @@ Deno.serve(async (req) => {
           status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
-      const { board_id } = await req.clone().then(r => r.json());
+      // board_id already parsed from request body above
       const { error: delErr } = await supabaseAdmin
         .from('custom_boards')
         .delete()
