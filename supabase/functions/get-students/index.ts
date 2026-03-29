@@ -525,6 +525,17 @@ Deno.serve(async (req) => {
       }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
+    // Board listing is public (no session required)
+    if (action === 'list_boards') {
+      const { data: boards } = await supabaseAdmin
+        .from('custom_boards')
+        .select('*')
+        .order('created_at', { ascending: true });
+      return new Response(JSON.stringify({ boards: boards || [] }), {
+        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     // Validate session token for list operations
     if (!session_token) {
       return new Response(
@@ -808,16 +819,7 @@ Deno.serve(async (req) => {
     }
 
 
-    // Board management actions (admin only)
-    if (action === 'list_boards') {
-      const { data: boards } = await supabaseAdmin
-        .from('custom_boards')
-        .select('*')
-        .order('created_at', { ascending: true });
-      return new Response(JSON.stringify({ boards: boards || [] }), {
-        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
+    // Board add/delete actions (admin only, list_boards handled above)
 
     if (action === 'add_board') {
       const token = session_token || sessionToken;
