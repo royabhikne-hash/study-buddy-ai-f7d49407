@@ -49,15 +49,6 @@ const ExamPrepDashboard: React.FC<Props> = ({
 
       if (uploadErr) throw uploadErr;
 
-      // Save material record
-      await supabase.from('exam_prep_materials' as any).insert({
-        session_id: sessionId,
-        student_id: access.studentId,
-        file_name: file.name,
-        file_url: filePath,
-        file_size: file.size,
-      });
-
       toast({ title: 'Uploaded!', description: 'Now extracting content...' });
 
       setExtracting(sessionId);
@@ -67,6 +58,7 @@ const ExamPrepDashboard: React.FC<Props> = ({
     } catch (err: any) {
       toast({ title: 'Upload failed', description: err.message, variant: 'destructive' });
     } finally {
+      e.target.value = '';
       setUploading(null);
       setExtracting(null);
     }
