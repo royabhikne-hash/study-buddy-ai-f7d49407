@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
         const sessionsUsed = usage?.sessions_used || 0;
         if (sessionsUsed >= monthlyLimit) {
           return new Response(JSON.stringify({ error: "Monthly limit reached", limit: monthlyLimit }), {
-            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
 
@@ -247,7 +247,7 @@ CRITICAL Instructions:
           console.error("AI API error:", aiResponse.status, errText.substring(0, 500));
           if (aiResponse.status === 429) {
             return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
-              status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+              status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
             });
           }
           throw new Error(`AI API error: ${aiResponse.status}`);
@@ -489,7 +489,7 @@ Evaluate and return ONLY valid JSON:
 
         if (!invite) {
           return new Response(JSON.stringify({ error: "Invalid or expired invite" }), {
-            status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
 
@@ -682,7 +682,7 @@ Generate exactly 5 quiz MCQs and 6 flashcards. All must be from the study materi
 
       default:
         return new Response(JSON.stringify({ error: "Unknown action" }), {
-          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
     }
   } catch (err: any) {
