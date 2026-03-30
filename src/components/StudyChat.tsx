@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Image, X, Loader2, Brain, TrendingUp, AlertTriangle, Volume2, VolumeX, CheckCircle, XCircle, ThumbsUp, HelpCircle, Lightbulb, Bot, User, Mic, MicOff, Settings2, BookOpen } from "lucide-react";
+import { Send, Image, X, Loader2, Brain, TrendingUp, AlertTriangle, Volume2, VolumeX, CheckCircle, XCircle, ThumbsUp, HelpCircle, Lightbulb, Bot, User, Mic, MicOff, Settings2, BookOpen, Sparkles } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import ReactMarkdown from "react-markdown";
 import SoundWave from "@/components/SoundWave";
 import VoiceInputIndicator from "@/components/VoiceInputIndicator";
 import Confetti from "@/components/Confetti";
@@ -1091,8 +1092,8 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
       {/* Enhanced ChatGPT-style Header - Mobile Optimized */}
       <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-border/50 bg-card/95 backdrop-blur-sm shadow-sm sticky top-0 z-10">
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md">
-            <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md">
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </div>
           <div>
             <h3 className="font-bold text-foreground text-sm sm:text-base">Study Buddy</h3>
@@ -1295,12 +1296,12 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
             >
               <div className="max-w-3xl mx-auto flex gap-2 sm:gap-4">
                 {/* Avatar - Smaller on mobile */}
-                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex-shrink-0 flex items-center justify-center shadow-sm ${
+                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-lg flex-shrink-0 flex items-center justify-center shadow-sm ${
                   isUser 
-                    ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground" 
-                    : "bg-gradient-to-br from-accent/80 to-accent text-white"
+                    ? "bg-accent/10 ring-1 ring-accent/20" 
+                    : "bg-primary/10 ring-1 ring-primary/20"
                 }`}>
-                  {isUser ? <User className="w-3 h-3 sm:w-4 sm:h-4" /> : <Bot className="w-3 h-3 sm:w-4 sm:h-4" />}
+                  {isUser ? <User className="w-3 h-3 sm:w-4 sm:h-4 text-accent" /> : <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />}
                 </div>
                 
                 {/* Content */}
@@ -1322,15 +1323,19 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
                     />
                   )}
                   
-                  <div className="text-foreground whitespace-pre-wrap leading-relaxed text-[13px] sm:text-[15px]">
+                  <div className="text-foreground leading-relaxed text-[13px] sm:text-[15px]">
                     {!isUser && message.isTyping && typingMessageId === message.id ? (
                       <TypingText 
                         text={message.content} 
                         speed={12}
                         onComplete={() => handleTypingComplete(message.id, message.content)}
                       />
+                    ) : isUser ? (
+                      <span className="whitespace-pre-wrap">{message.content}</span>
                     ) : (
-                      message.content
+                      <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2 [&>h1]:text-base [&>h2]:text-sm [&>h3]:text-sm [&>pre]:rounded-xl [&>pre]:bg-secondary [&>code]:bg-secondary [&>code]:px-1.5 [&>code]:py-0.5 [&>code]:rounded-md [&>code]:text-xs">
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                      </div>
                     )}
                   </div>
                   
@@ -1584,8 +1589,8 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
         {isLoading && (
           <div className="py-5 bg-muted/20">
             <div className="max-w-2xl mx-auto px-4 flex gap-3">
-              <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-accent/80 to-accent text-accent-foreground">
-                <Bot className="w-3.5 h-3.5" />
+              <div className="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center bg-primary/10 ring-1 ring-primary/20">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
               </div>
               <div className="flex items-center gap-1.5 pt-1">
                 <div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full animate-bounce" style={{animationDelay: "0ms"}}></div>
@@ -1618,9 +1623,9 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
 
       {/* ChatGPT-style Input - Mobile Optimized */}
       {!isQuizMode && (
-        <div className="border-t border-border/50 bg-background p-2 sm:p-3 pb-safe">
+        <div className="border-t border-border/40 bg-background p-2 sm:p-3 pb-safe">
           <div className="max-w-2xl mx-auto">
-            <div className="flex items-center gap-1.5 sm:gap-2 bg-muted/50 border border-border/50 rounded-full px-2 sm:px-3 py-1.5 sm:py-2 focus-within:border-primary/50 transition-colors">
+            <div className="relative flex items-center gap-1.5 sm:gap-2 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm px-2 sm:px-3 py-1.5 sm:py-2 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10 transition-all duration-200">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -1632,7 +1637,7 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
                 variant="ghost"
                 size="icon"
                 onClick={() => fileInputRef.current?.click()}
-                className="shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted"
+                className="shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
               >
                 <Image className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Button>
@@ -1643,9 +1648,9 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
                   variant="ghost"
                   size="icon"
                   onClick={toggleListening}
-                  className={`shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full transition-colors ${
+                  className={`shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-xl transition-colors ${
                     isListening 
-                      ? "bg-destructive/20 text-destructive hover:bg-destructive/30" 
+                      ? "bg-destructive/10 text-destructive hover:bg-destructive/20" 
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}
                 >
@@ -1654,7 +1659,7 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
               )}
               
               <Input
-                placeholder={isListening ? "Listening..." : "Message..."}
+                placeholder={isListening ? "Listening..." : "Message Study Buddy..."}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -1665,7 +1670,8 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
                 size="icon"
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim() && !selectedImage}
-                className="shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full"
+                className="shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-xl"
+                variant={inputValue.trim() ? "default" : "ghost"}
               >
                 {isLoading ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" /> : <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
               </Button>
