@@ -339,7 +339,7 @@ const WeeklyTest = () => {
               <Button
                 onClick={handleSubmitTest}
                 disabled={answeredCount < questions.length}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-primary hover:bg-primary/90"
               >
                 Submit Test ({answeredCount}/{questions.length})
               </Button>
