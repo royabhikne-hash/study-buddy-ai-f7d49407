@@ -57,10 +57,10 @@ const StudyBlaster = () => {
 
   return (
     <div className="min-h-screen liquid-bg pb-20 sm:pb-6">
-      <div className="liquid-orb liquid-orb-blue w-[400px] h-[400px] top-[-100px] right-[-150px]" />
-      <div className="liquid-orb liquid-orb-green w-[300px] h-[300px] bottom-[-80px] left-[-100px]" />
+      <div className="liquid-orb liquid-orb-blue w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] top-[-80px] sm:top-[-100px] right-[-100px] sm:right-[-150px]" />
+      <div className="liquid-orb liquid-orb-green w-[200px] sm:w-[300px] h-[200px] sm:h-[300px] bottom-[-60px] sm:bottom-[-80px] left-[-80px] sm:left-[-100px]" />
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 pt-6 sm:pt-10">
+      <div className="relative z-10 max-w-4xl mx-auto px-3 sm:px-4 pt-4 sm:pt-10">
         {selectedProjectId && studentId ? (
           <StudyBlasterDashboard
             projectId={selectedProjectId}
