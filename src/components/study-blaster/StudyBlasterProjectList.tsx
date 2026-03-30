@@ -71,28 +71,28 @@ const StudyBlasterProjectList = ({ projects, studentId, onSelectProject, onRefre
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-[hsl(var(--edu-purple))] bg-clip-text text-transparent flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-primary" />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+        <div className="min-w-0">
+          <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-[hsl(var(--edu-purple))] bg-clip-text text-transparent flex items-center gap-2">
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary shrink-0" />
             Study Blaster
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">Create projects, upload sources, and study with AI</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">Create projects, upload sources, and study with AI</p>
         </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 glass-card border-primary/20 hover:border-primary/40">
+            <Button className="gap-2 glass-card border-primary/20 hover:border-primary/40 w-full sm:w-auto shrink-0">
               <Plus className="w-4 h-4" /> New Project
             </Button>
           </DialogTrigger>
-          <DialogContent className="glass-card border-primary/20">
+          <DialogContent className="glass-card border-primary/20 max-w-[calc(100vw-2rem)] sm:max-w-lg mx-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-primary" />
                 Create Study Project
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 mt-4">
+            <div className="space-y-3 mt-3">
               <div>
                 <label className="text-sm font-medium text-foreground">Project Title</label>
                 <Input
@@ -108,14 +108,15 @@ const StudyBlasterProjectList = ({ projects, studentId, onSelectProject, onRefre
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Brief description of what you're studying..."
-                  className="mt-1"
+                  placeholder="Brief description..."
+                  className="mt-1 min-h-[60px]"
+                  rows={2}
                   maxLength={500}
                 />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground flex items-center gap-1">
-                  <Calendar className="w-4 h-4" /> Target Completion Date (optional)
+                  <Calendar className="w-4 h-4" /> Target Date (optional)
                 </label>
                 <Input
                   type="date"

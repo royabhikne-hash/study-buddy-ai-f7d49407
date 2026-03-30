@@ -123,12 +123,12 @@ const StudyChat = ({ onEndStudy, studentId, studentClass = "10", studentBoard = 
   
   const getRandomGreeting = () => {
     const greetings = [
-      "Hey! Ready to learn something amazing today? 🚀\n\nJust tell me which subject you want to study - say \"Start Maths\" or \"Start Science\" and let's dive in!",
-      "Welcome back, champ! 🎓\n\nWhat subject are we conquering today? Say \"Start History\" or \"Start English\" - I'm here to help you ace it!",
-      "Good to see you! Let's make today count! 💪\n\nPick your subject - say \"Start Computer\" or \"Start Physics\" and we'll get started right away!",
-      "Hello there, future topper! 🌟\n\nWhich subject do you want to master today? Just say \"Start [Subject]\" and I'll be your personal teacher!",
-      "Hey, welcome! Time to power up your brain! ⚡\n\nTell me what you'd like to study - say \"Start Biology\" or \"Start Chemistry\" and let's begin!",
-      "Hi! Your Study Buddy is ready! 📚\n\nWhat's on the menu today? Say \"Start [Subject]\" to begin, and when you're done, say \"Finish study\" for a quiz!"
+      "Hey there! 🚀 Let's crush some studying today!\n\nJust say \"Start Maths\" or \"Start Science\" and we'll get rolling. When you're done with a subject, say \"[Subject] done\" and I'll set up the next one!",
+      "Welcome back, superstar! 🌟 Your personal tutor is all set!\n\nPick any subject - say \"Start Physics\" or \"Start English\" to begin. I'll explain everything step by step with examples!",
+      "Yo! Ready for a power study session? 💪\n\nSay \"Start [Subject]\" to kick things off. I'll teach, you learn, and at the end we'll test what you've mastered with a quiz!",
+      "Hey champion! 🎯 Another day, another chance to level up!\n\nTell me your subject - \"Start History\", \"Start Biology\", anything! Say \"Finish study\" when you're done and I'll quiz you!",
+      "Hi! Let's make today's study session legendary! ⚡\n\nDrop a \"Start [Subject]\" to begin. I'll break down tough concepts into easy bites and give you real-world examples to remember them!",
+      "Hello, future topper! 📚 Your AI Study Buddy is fired up!\n\nSay \"Start Chemistry\" or any subject to dive in. Multiple subjects? No problem - just say \"[Subject] done\" to switch!"
     ];
     return greetings[Math.floor(Math.random() * greetings.length)];
   };
