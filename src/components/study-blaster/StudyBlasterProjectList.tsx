@@ -85,14 +85,14 @@ const StudyBlasterProjectList = ({ projects, studentId, onSelectProject, onRefre
               <Plus className="w-4 h-4" /> New Project
             </Button>
           </DialogTrigger>
-          <DialogContent className="glass-card border-primary/20">
+          <DialogContent className="glass-card border-primary/20 max-w-[calc(100vw-2rem)] sm:max-w-lg mx-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-primary" />
                 Create Study Project
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 mt-4">
+            <div className="space-y-3 mt-3">
               <div>
                 <label className="text-sm font-medium text-foreground">Project Title</label>
                 <Input
@@ -108,14 +108,15 @@ const StudyBlasterProjectList = ({ projects, studentId, onSelectProject, onRefre
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Brief description of what you're studying..."
-                  className="mt-1"
+                  placeholder="Brief description..."
+                  className="mt-1 min-h-[60px]"
+                  rows={2}
                   maxLength={500}
                 />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground flex items-center gap-1">
-                  <Calendar className="w-4 h-4" /> Target Completion Date (optional)
+                  <Calendar className="w-4 h-4" /> Target Date (optional)
                 </label>
                 <Input
                   type="date"
