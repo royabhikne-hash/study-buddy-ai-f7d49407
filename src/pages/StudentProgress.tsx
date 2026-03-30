@@ -443,14 +443,14 @@ const StudentProgress = () => {
             <div className="space-y-2">
               {strongSubs.map(([sub, count]) => (
                 <div key={sub} className="flex items-center gap-3 py-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-accent shrink-0" />
                   <span className="text-sm flex-1">{sub}</span>
                   <span className="text-xs text-muted-foreground">{count} tests</span>
                 </div>
               ))}
               {weakSubs.map(([sub, count]) => (
                 <div key={sub} className="flex items-center gap-3 py-1.5">
-                  <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-destructive shrink-0" />
                   <span className="text-sm flex-1">{sub}</span>
                   <span className="text-xs text-muted-foreground">{count} tests</span>
                 </div>
