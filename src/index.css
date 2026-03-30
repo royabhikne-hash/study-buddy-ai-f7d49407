@@ -314,6 +314,25 @@
     box-shadow: 0 1px 6px hsl(var(--foreground) / 0.04);
   }
 
+  /* ▸ CHAT PROSE OVERRIDES ─────────────────────── */
+  .prose pre {
+    @apply rounded-xl border border-border/50;
+    background: hsl(var(--secondary)) !important;
+  }
+  .prose code:not(pre code) {
+    @apply text-primary font-medium;
+    font-size: 0.85em;
+  }
+  .prose ul, .prose ol {
+    @apply pl-4;
+  }
+  .prose li {
+    @apply text-sm;
+  }
+  .prose blockquote {
+    @apply border-l-2 border-primary/30 pl-4 italic text-muted-foreground;
+  }
+
   /* ▸ QUIZ OPTIONS ─────────────────────────────── */
   .quiz-option { @apply w-full text-left p-4 rounded-2xl border-2 transition-all duration-300 text-sm font-medium; }
   .quiz-option-default { @apply border-border bg-card; }

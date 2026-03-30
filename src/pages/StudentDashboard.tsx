@@ -454,10 +454,10 @@ const StudentDashboard = () => {
   // Study sessions now use route navigation (/study) for WebView/PWA compatibility
 
   return (
-    <div className="min-h-screen liquid-bg pb-16 sm:pb-0 relative overflow-hidden">
-      {/* Liquid background orbs */}
-      <div className="liquid-orb liquid-orb-blue w-[350px] h-[350px] -top-32 -left-20 opacity-30" />
-      <div className="liquid-orb liquid-orb-purple w-[250px] h-[250px] top-40 -right-20 opacity-25" style={{ animationDelay: '3s' }} />
+    <div className="min-h-screen liquid-bg pb-20 sm:pb-0 relative overflow-hidden">
+      {/* Liquid background orbs - smaller on mobile */}
+      <div className="liquid-orb liquid-orb-blue w-[250px] sm:w-[350px] h-[250px] sm:h-[350px] -top-20 sm:-top-32 -left-16 sm:-left-20 opacity-30" />
+      <div className="liquid-orb liquid-orb-purple w-[180px] sm:w-[250px] h-[180px] sm:h-[250px] top-40 -right-16 sm:-right-20 opacity-25" style={{ animationDelay: '3s' }} />
       
       {/* Header */}
       <header className="glass-nav border-b border-border/20 sticky top-0 z-10">
