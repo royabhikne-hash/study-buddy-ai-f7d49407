@@ -195,7 +195,9 @@ const WeeklyTest = () => {
             studentId,
             source: "weekly_test",
             testData: {
-              subjectResults: subjectStats,
+              subjectResults: Object.fromEntries(
+                Object.keys(subjectTotal).map(sub => [sub, { correct: subjectCorrect[sub] || 0, total: subjectTotal[sub] }])
+              ),
               weakSubjects,
               strongSubjects,
             },
