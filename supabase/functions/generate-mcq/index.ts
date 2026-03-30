@@ -356,7 +356,7 @@ Return ONLY a valid JSON array:
       mcqAttempts?.forEach(a => studiedSubjects.add(a.subject));
 
       return new Response(JSON.stringify({
-        available: daysSinceLastTest >= 7 && !alreadyTakenThisWeek && studiedSubjects.size > 0,
+        available: !alreadyTakenThisWeek && studiedSubjects.size > 0,
         alreadyTakenThisWeek,
         daysSinceLastTest,
         studiedSubjects: [...studiedSubjects],
