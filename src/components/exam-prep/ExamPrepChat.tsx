@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Send, Loader2, Mic, MicOff, Volume2, VolumeX, ClipboardCheck, Trophy, ChevronRight, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, Mic, MicOff, Volume2, VolumeX, ClipboardCheck, Trophy, ChevronRight, CheckCircle, XCircle, Bot, User, Sparkles } from 'lucide-react';
 import { ExamPrepSession, ChatMessage } from '@/hooks/useExamPrep';
 import ReactMarkdown from 'react-markdown';
 
@@ -493,20 +493,24 @@ const ExamPrepChat: React.FC<Props> = ({ session, studentName, onSendMessage, on
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-border bg-card">
-        <Button variant="ghost" size="icon" onClick={onBack}>
-          <ArrowLeft className="h-5 w-5" />
+      <div className="flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 border-b border-border/50 bg-card/95 backdrop-blur-sm shadow-sm sticky top-0 z-10">
+        <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0 h-8 w-8 rounded-full">
+          <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div className="flex-1">
-          <p className="font-semibold text-sm text-foreground">{session.exam_name || 'AI Tutor'}</p>
-          <p className="text-xs text-muted-foreground">
+        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md shrink-0">
+          <Sparkles className="w-4 h-4 text-white" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-bold text-sm text-foreground truncate">{session.exam_name || 'Exam Prep AI'}</p>
+          <p className="text-[10px] sm:text-xs text-muted-foreground flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
             {session.extracted_topics?.length ? `${session.extracted_topics.length} topics loaded` : 'General prep'}
           </p>
         </div>
-        <Button variant="ghost" size="icon" onClick={toggleTTS} className={ttsEnabled ? 'text-primary' : 'text-muted-foreground'}>
+        <Button variant="ghost" size="icon" onClick={toggleTTS} className={`h-8 w-8 rounded-full ${ttsEnabled ? 'text-primary' : 'text-muted-foreground'}`}>
           {ttsEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
         </Button>
-        <Button variant="outline" size="sm" onClick={startVirtualExam} className="text-xs gap-1" disabled={!hasMaterials}>
+        <Button variant="outline" size="sm" onClick={startVirtualExam} className="text-xs gap-1 h-8 rounded-full" disabled={!hasMaterials}>
           <ClipboardCheck className="h-3.5 w-3.5" /> Exam
         </Button>
       </div>
@@ -525,51 +529,93 @@ const ExamPrepChat: React.FC<Props> = ({ session, studentName, onSendMessage, on
         </div>
       )}
 
-      {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
-              msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'
-            }`}>
-              {msg.role === 'assistant' ? (
-                <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:my-1 [&>ul]:my-1 [&>ol]:my-1">
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
-                </div>
-              ) : msg.content}
+      {/* Messages - ChatGPT Style */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full px-4 py-8">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-gradient-to-br from-primary to-accent shadow-lg">
+              <Sparkles className="w-6 h-6 text-white" />
             </div>
+            <h3 className="text-lg font-bold text-foreground mb-1">Exam Prep AI</h3>
+            <p className="text-sm text-muted-foreground text-center max-w-xs">
+              Upload materials and ask me anything. Say "I am ready" when you want to take a virtual exam!
+            </p>
           </div>
-        ))}
-        {sending && (
-          <div className="flex justify-start">
-            <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-sm">Thinking...</span>
+        ) : (
+          <div className="space-y-0 py-2">
+            {messages.map((msg, i) => (
+              <div key={i} className={`px-3 sm:px-4 py-3 sm:py-4 ${msg.role === 'assistant' ? 'bg-muted/20' : 'bg-background'} transition-colors`}>
+                <div className="max-w-2xl mx-auto flex gap-2.5 sm:gap-3">
+                  {/* Avatar */}
+                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                    msg.role === 'assistant'
+                      ? 'bg-primary/10 ring-1 ring-primary/20'
+                      : 'bg-accent/10 ring-1 ring-accent/20'
+                  }`}>
+                    {msg.role === 'assistant'
+                      ? <Sparkles className="w-3.5 h-3.5 text-primary" />
+                      : <User className="w-3.5 h-3.5 text-accent" />
+                    }
+                  </div>
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-semibold text-muted-foreground mb-1 block">
+                      {msg.role === 'assistant' ? 'Exam Prep AI' : 'You'}
+                    </span>
+                    {msg.role === 'assistant' ? (
+                      <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2 [&>h1]:text-base [&>h2]:text-sm [&>h3]:text-sm [&>pre]:rounded-xl [&>pre]:bg-secondary [&>code]:bg-secondary [&>code]:px-1.5 [&>code]:py-0.5 [&>code]:rounded-md [&>code]:text-xs">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-foreground leading-relaxed">{msg.content}</p>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
+            {sending && (
+              <div className="px-3 sm:px-4 py-3 sm:py-4 bg-muted/20">
+                <div className="max-w-2xl mx-auto flex gap-2.5 sm:gap-3">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center shrink-0">
+                    <Sparkles className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-xs font-semibold text-muted-foreground mb-1.5 block">Exam Prep AI</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <div className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <div className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Input */}
-      <div className="border-t border-border p-3 bg-card">
-        <div className="flex items-center gap-2">
-          <Input
-            ref={inputRef}
-            placeholder={hasMaterials ? "Ask your tutor or say 'I am ready' for exam..." : "Upload study materials first to start chatting..."}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            className="flex-1"
-          />
-          <Button variant="ghost" size="icon" onClick={toggleVoiceInput}
-            className={isListening ? 'text-destructive' : 'text-muted-foreground'}>
-            {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-          </Button>
-          <Button size="icon" onClick={handleSend} disabled={!input.trim() || sending}>
-            <Send className="h-4 w-4" />
-          </Button>
+      {/* Input - ChatGPT Style */}
+      <div className="border-t border-border/40 p-2.5 sm:p-3 bg-background">
+        <div className="max-w-2xl mx-auto">
+          <div className="relative flex items-end gap-2 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm px-3 py-2 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10 transition-all duration-200">
+            <Input
+              ref={inputRef}
+              placeholder={hasMaterials ? "Ask your tutor or say 'I am ready' for exam..." : "Upload materials first..."}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+              className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 h-8 text-sm"
+            />
+            <Button variant="ghost" size="icon" onClick={toggleVoiceInput}
+              className={`shrink-0 h-8 w-8 rounded-xl ${isListening ? 'text-destructive bg-destructive/10' : 'text-muted-foreground hover:text-foreground'}`}>
+              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </Button>
+            <Button size="icon" onClick={handleSend} disabled={!input.trim() || sending}
+              className="shrink-0 h-8 w-8 rounded-xl"
+              variant={input.trim() ? "default" : "ghost"}>
+              {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
